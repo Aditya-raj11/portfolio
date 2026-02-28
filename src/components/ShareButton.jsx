@@ -35,7 +35,7 @@ const ShareButton = ({ title, text, url }) => {
     return (
         <button
             onClick={handleShare}
-            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#303134] hover:bg-gray-50 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 transition-all shadow-sm hover:shadow active:scale-95 group"
+            className="flex items-center gap-2 px-6 py-3 btn-3d rounded-full group cursor-pointer"
             title="Share Portfolio"
         >
             {copied ? (
@@ -45,7 +45,7 @@ const ShareButton = ({ title, text, url }) => {
                 </>
             ) : (
                 <>
-                    <Share2 size={16} className="text-blue-500 group-hover:-rotate-12 transition-transform" />
+                    <Share2 size={16} className="text-black dark:text-white group-hover:-rotate-12 transition-transform" />
                     <span>Share</span>
                 </>
             )}

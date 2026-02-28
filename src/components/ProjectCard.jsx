@@ -61,10 +61,10 @@ const ProjectCard = ({ project }) => {
 
     return (
         <>
-            <div className="group bg-white dark:bg-[#303134] rounded-2xl overflow-hidden hover:shadow-md hover:border-[#1a73e8] dark:hover:border-[#8AB4F8] transition-all duration-300 border border-[#dadce0] dark:border-[#3c4043] flex flex-col h-full" style={{ transform: 'translateZ(0)', webkitMaskImage: '-webkit-radial-gradient(white, black)' }}>
+            <div className="group glass-panel rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1">
                 {/* Image Area */}
                 <div
-                    className="h-52 bg-[#f8f9fa] dark:bg-[#202124] relative overflow-hidden cursor-zoom-in group-image"
+                    className="h-52 bg-gray-100 dark:bg-black/40 relative overflow-hidden cursor-zoom-in group-image"
                     onClick={toggleLightbox}
                 >
                     {currentImage ? (
@@ -84,7 +84,7 @@ const ProjectCard = ({ project }) => {
                             />
 
                             {/* Overlay Gradient (Dark mode mostly) */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent dark:from-black/60 dark:to-transparent opacity-60"></div>
+                            <div className="hidden md:block h-px flex-1 bg-gradient-to-r from-gray-300 to-transparent dark:from-gray-700 ml-8"></div>
 
                             {/* Icons (Category) */}
                             <div className="absolute top-3 right-3 bg-white/90 dark:bg-black/40 backdrop-blur-md p-2 rounded-full text-[#202124] dark:text-white/90 border border-gray-200 dark:border-white/10 shadow-sm">
@@ -117,19 +117,19 @@ const ProjectCard = ({ project }) => {
                 </div>
 
                 {/* Content Area */}
-                <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="text-xl font-semibold text-[#202124] dark:text-[#E8EAED] mb-2">{title}</h3>
-                    <p className="text-[#5f6368] dark:text-[#9AA0A6] text-sm leading-relaxed mb-6 line-clamp-3">
+                <div className="p-6 flex flex-col flex-grow relative z-10">
+                    <h3 className="text-xl font-heading text-black dark:text-white font-bold mb-2">{title}</h3>
+                    <p className="text-black/80 dark:text-gray-200 text-sm leading-relaxed mb-6 line-clamp-3">
                         {description}
                     </p>
 
-                    <div className="mt-auto flex gap-3 pt-4 border-t border-[#dadce0] dark:border-[#3c4043]">
+                    <div className="mt-auto flex gap-3 pt-4 border-t border-gray-200 dark:border-white/10">
                         {category === 'app' && downloadUrl && (
                             <a
                                 href={downloadUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex-1 py-2 px-4 rounded-full bg-[#1a73e8] dark:bg-[#8AB4F8] hover:bg-[#1557b0] dark:hover:bg-[#aecbfa] text-white dark:text-[#202124] text-sm font-medium text-center transition-colors flex items-center justify-center gap-2 shadow-sm"
+                                className="flex-1 py-2 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-bold text-center transition-all flex items-center justify-center gap-2 shadow-md shadow-blue-500/20"
                             >
                                 <Download size={16} /> APK
                             </a>
@@ -140,14 +140,14 @@ const ProjectCard = ({ project }) => {
                                 href={projectUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex-1 py-2 px-4 rounded-full bg-[#1a73e8] dark:bg-[#8AB4F8] hover:bg-[#1557b0] dark:hover:bg-[#aecbfa] text-white dark:text-[#202124] text-sm font-medium text-center transition-colors flex items-center justify-center gap-2 shadow-sm"
+                                className="flex-1 py-2 px-4 rounded-xl glass-panel hover:bg-slate-50 dark:hover:bg-white/10 text-black dark:text-white text-sm font-bold text-center transition-all flex items-center justify-center gap-2"
                             >
                                 <ExternalLink size={16} /> Visit
                             </a>
                         )}
 
                         {(!downloadUrl && !projectUrl) && (
-                            <div className="text-[#9AA0A6] text-sm italic w-full text-center">Coming Soon</div>
+                            <div className="text-slate-400 dark:text-slate-500 text-sm italic w-full text-center">Coming Soon</div>
                         )}
                     </div>
                 </div>

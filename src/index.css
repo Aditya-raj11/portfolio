@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Archivo+Black&display=swap');
 
 @theme {
-  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-heading: "Archivo Black", system-ui, sans-serif;
 }
 
 /* Enable class-based dark mode */
@@ -13,10 +14,10 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Base Styles */
+/* Base Styles - Glossy Theme Light/Dark */
 body {
-  @apply bg-[#f8f9fa] text-[#202124] transition-colors duration-300;
-  font-family: "Inter", sans-serif;
+  @apply bg-[#f8fafc] text-black transition-colors duration-500;
+  font-family: var(--font-sans);
 }
 
 /* Lenis Recommended CSS */
@@ -41,9 +42,43 @@ html.lenis body {
   pointer-events: none;
 }
 
-/* Dark Mode Overrides applied when 'dark' class is on html/body */
-:root.dark body {
-  @apply bg-[#202124] text-[#E8EAED];
+/* Dark Mode Overrides */
+@apply bg-[#000000] text-[#ffffff];
+
+/* Reusable Typography Classes for Glossy Look */
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.text-glossy {
+  @apply text-black;
+  text-shadow: 0px 1px 2px rgba(255, 255, 255, 1), 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dark .text-glossy {
+  @apply text-white;
+  text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.4);
+}
+
+/* Glassmorphism utility classes */
+.glass-panel {
+  @apply bg-white/95 backdrop-blur-xl border-2 border-white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 0 2px 4px rgba(255, 255, 255, 1);
+}
+
+.dark .glass-panel {
+  @apply bg-[#0a0a0a]/80 backdrop-blur-2xl border border-white/20;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+}
+
+/* Glossy 3D Translucent Buttons */
+.btn-3d {
+  @apply bg-white/40 backdrop-blur-xl border border-black/10 text-black font-bold rounded-full transition-all duration-300 hover:bg-white/60 border-b-[4px] border-b-black/20 active:border-b active:translate-y-[3px] shadow-sm flex items-center justify-center;
+}
+
+.dark .btn-3d {
+  @apply bg-[#1a1a1a]/40 backdrop-blur-md text-white border border-white/20 border-b-[4px] border-b-black font-bold rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:bg-[#252525]/60 hover:border-white/30 active:border-b active:border-white/20 active:translate-y-[3px];
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.9), inset 0 2px 3px rgba(255, 255, 255, 0.1), inset 0 -2px 5px rgba(0, 0, 0, 0.5);
 }
 
 /* Custom Scrollbar */

@@ -93,7 +93,7 @@ const ImageLightbox = ({ isOpen, onClose, images, initialIndex = 0 }) => {
                     >
                         {isLoading && (
                             <div className="absolute inset-0 flex items-center justify-center">
-                                <Loader2 className="animate-spin text-blue-500" size={48} />
+                                <Loader2 className="animate-spin text-white" size={48} />
                             </div>
                         )}
 

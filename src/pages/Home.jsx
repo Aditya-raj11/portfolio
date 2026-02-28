@@ -11,7 +11,7 @@ import SEO from '../components/SEO';
 import ShareButton from '../components/ShareButton';
 import AnimatedSection from '../components/AnimatedSection';
 import Tilt from 'react-parallax-tilt';
-import { Loader2, Github, Linkedin, Mail, FileText, Sparkles, Briefcase, Code2, Rocket, MessageCircle, Star } from 'lucide-react';
+import { Github, Linkedin, Mail, FileText, ChevronRight, ExternalLink, Star, Code2, Briefcase, Rocket, Sparkles, Loader2, FolderOpen } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ImageLightbox from '../components/ImageLightbox';
 
@@ -184,57 +184,59 @@ const Home = () => {
                 </div>
 
                 <AnimatedSection delay={0.1} className="max-w-4xl mt-12 relative z-10">
-                    <div className="flex items-center gap-4 mb-6">
+                    <div className="flex items-center gap-4 mb-12">
                         <div className="relative group">
                             {profile.avatarUrl ? (
                                 <img
                                     src={profile.avatarUrl}
                                     alt="Profile"
-                                    className="w-16 h-16 rounded-full object-cover border-2 border-white dark:border-gray-800 shadow-xl relative z-10"
+                                    className="w-16 h-16 rounded-full object-cover border-2 border-slate-200 dark:border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(255,255,255,0.1)] relative z-10"
                                 />
                             ) : (
-                                <div className="w-16 h-16 rounded-full bg-[#1a73e8] dark:bg-[#8AB4F8] flex items-center justify-center text-2xl font-bold text-white dark:text-[#202124] shadow-md relative z-10">
+                                <div className="w-16 h-16 rounded-full bg-black flex items-center justify-center text-2xl font-bold text-white shadow-md relative z-10 border border-white/10">
                                     {profile.name.charAt(0)}{profile.name.split(' ')[1] ? profile.name.split(' ')[1].charAt(0) : ''}
                                 </div>
                             )}
                         </div>
-                        <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-[#5f6368] dark:text-[#9AA0A6] font-medium tracking-wide text-xs uppercase border border-gray-200 dark:border-gray-700">
-                            Portfolio
-                        </span>
+                        <a href="/" className="inline-block">
+                            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-heading text-3xl transition-colors text-glossy underline-offset-4 hover:underline px-4 py-2 cursor-pointer">
+                                {profile.name}
+                            </button>
+                        </a>
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-[#202124] dark:text-white leading-tight">
-                        Hi, I'm <span className="text-[#1a73e8] dark:text-[#8AB4F8]">{profile.name}</span>.
+                    <h1 className="text-5xl md:text-7xl font-heading mb-6 tracking-tight text-glossy leading-tight">
+                        Hi, I'm <br /><span>{profile.name}</span>.
                     </h1>
 
-                    <h2 className="text-2xl md:text-3xl text-[#5f6368] dark:text-[#E8EAED] font-light mb-8 max-w-2xl leading-relaxed">
+                    <h2 className="text-2xl md:text-3xl font-heading text-black/80 dark:text-gray-200 font-light mb-8 max-w-2xl leading-relaxed">
                         {profile.tagline || "A Tech Explorer & Full Stack Developer making useful things for the web and mobile."}
                     </h2>
 
-                    <p className="text-[#5f6368] dark:text-[#9AA0A6] text-lg leading-relaxed max-w-2xl mb-10">
-                        Currently studying at <span className="text-[#202124] dark:text-white font-medium border-b-2 border-blue-500/30">KIIT</span>. I specialize in building clean, efficient applications using modern technologies like React, Firebase, and Tailwind CSS.
+                    <p className="text-black/80 dark:text-gray-300 text-lg leading-relaxed max-w-2xl mb-10">
+                        Currently studying at <span className="text-black dark:text-white font-bold border-b-2 border-black/30 dark:border-white/30">KIIT</span>. I specialize in building clean, efficient applications using modern technologies like React, Firebase, and Tailwind CSS.
                     </p>
 
                     <div className="flex flex-wrap gap-4">
                         {profile.resumeUrl && (
                             <button
                                 onClick={() => setIsResumeOpen(true)}
-                                className="px-8 py-3 bg-[#1a73e8] dark:bg-[#8AB4F8] hover:bg-[#1557b0] dark:hover:bg-[#aecbfa] text-white dark:text-[#202124] rounded-full font-medium transition-colors flex items-center gap-2 shadow-sm"
+                                className="px-8 py-3 btn-3d rounded-full flex items-center gap-2 z-20"
                             >
                                 <FileText size={18} /> View Resume
                             </button>
                         )}
                         {profile.githubUrl && (
-                            <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-white dark:bg-[#303134] border border-[#dadce0] dark:border-[#5f6368] hover:border-[#1a73e8] dark:hover:border-[#8AB4F8] text-[#202124] dark:text-[#E8EAED] rounded-full font-medium transition-colors flex items-center gap-2 shadow-sm">
+                            <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 btn-3d rounded-full flex items-center gap-2 z-20">
                                 <Github size={18} /> GitHub
                             </a>
                         )}
                         {profile.linkedinUrl && (
-                            <a href={profile.linkedinUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-white dark:bg-[#303134] border border-[#dadce0] dark:border-[#5f6368] hover:border-[#0a66c2] dark:hover:border-[#0a66c2] text-[#202124] dark:text-[#E8EAED] rounded-full font-medium transition-colors flex items-center gap-2 shadow-sm">
+                            <a href={profile.linkedinUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 btn-3d rounded-full flex items-center gap-2 z-20">
                                 <Linkedin size={18} /> LinkedIn
                             </a>
                         )}
-                        <a href={`mailto:${profile.email}`} className="px-6 py-3 bg-white dark:bg-[#303134] border border-[#dadce0] dark:border-[#5f6368] hover:border-[#ea4335] dark:hover:border-[#ea4335] text-[#202124] dark:text-[#E8EAED] rounded-full font-medium transition-colors flex items-center gap-2 shadow-sm">
+                        <a href={`mailto:${profile.email}`} className="px-6 py-3 btn-3d rounded-full flex items-center gap-2 z-20">
                             <Mail size={18} /> Email
                         </a>
                         <ShareButton title={`${profile.name} - Portfolio`} text={profile.tagline} />
@@ -243,29 +245,29 @@ const Home = () => {
                     {/* AI Recommender Widget */}
                     <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
                         <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-4 flex items-center gap-2">
-                            <Sparkles size={16} className="text-purple-500" />
+                            <Sparkles size={16} className="text-black dark:text-white" />
                             Not sure where to start? Ask the AI:
                         </p>
                         <div className="flex flex-wrap gap-3">
                             <button
                                 onClick={() => handlePersonaClick('recruiter')}
-                                className="px-4 py-2 bg-white dark:bg-[#303134] hover:bg-blue-50 dark:hover:bg-blue-900/20 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 transition-colors flex items-center gap-2 group"
+                                className="px-4 py-2 btn-3d rounded-lg text-sm transition-all flex items-center gap-2 group cursor-pointer"
                             >
-                                <Briefcase size={16} className="text-blue-500 group-hover:scale-110 transition-transform" />
+                                <Briefcase size={16} className="text-black dark:text-white group-hover:scale-110 transition-transform" />
                                 I'm a Recruiter
                             </button>
                             <button
                                 onClick={() => handlePersonaClick('developer')}
-                                className="px-4 py-2 bg-white dark:bg-[#303134] hover:bg-green-50 dark:hover:bg-green-900/20 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 transition-colors flex items-center gap-2 group"
+                                className="px-4 py-2 btn-3d rounded-lg text-sm transition-all flex items-center gap-2 group cursor-pointer"
                             >
-                                <Code2 size={16} className="text-green-500 group-hover:scale-110 transition-transform" />
+                                <Code2 size={16} className="text-black dark:text-white group-hover:scale-110 transition-transform" />
                                 I'm a Developer
                             </button>
                             <button
                                 onClick={() => handlePersonaClick('founder')}
-                                className="px-4 py-2 bg-white dark:bg-[#303134] hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 transition-colors flex items-center gap-2 group"
+                                className="px-4 py-2 btn-3d rounded-lg text-sm transition-all flex items-center gap-2 group cursor-pointer"
                             >
-                                <Rocket size={16} className="text-orange-500 group-hover:scale-110 transition-transform" />
+                                <Sparkles size={16} className="text-black dark:text-white group-hover:scale-110 transition-transform" />
                                 I'm a Founder
                             </button>
                         </div>
@@ -277,15 +279,15 @@ const Home = () => {
             {/* Projects Section */}
             <main id="projects" className="max-w-7xl mx-auto px-6 pb-24 relative z-10">
                 <AnimatedSection delay={0.2} className="flex items-center justify-between mb-12">
-                    <h2 className="text-3xl font-bold text-[#202124] dark:text-white">Selected Projects</h2>
-                    <div className="hidden md:block h-px flex-1 bg-gradient-to-r from-gray-200 to-transparent dark:from-gray-700 ml-8"></div>
+                    <h2 className="text-3xl font-heading text-glossy">Selected Projects</h2>
+                    <div className="hidden md:block h-px flex-1 bg-gradient-to-r from-slate-300 to-transparent dark:from-slate-700 ml-8"></div>
                 </AnimatedSection>
 
                 {/* Featured Project Spotlight */}
                 {featuredProject && (
                     <AnimatedSection delay={0.1} className="mb-16">
                         <div className="relative group">
-                            <div className="relative bg-white dark:bg-[#202124] ring-1 ring-gray-200 dark:ring-gray-700 rounded-xl overflow-hidden shadow-sm flex flex-col md:flex-row">
+                            <div className="relative glass-panel rounded-xl overflow-hidden flex flex-col md:flex-row hover:shadow-[0_8px_32px_rgba(59,130,246,0.15)] transition-all">
                                 <div
                                     className={`md:w-3/5 h-64 md:h-auto overflow-hidden relative ${featuredProject.imageUrl ? 'cursor-zoom-in' : ''}`}
                                     onClick={() => {
@@ -302,23 +304,23 @@ const Home = () => {
                                     </div>
                                 </div>
                                 <div className="md:w-2/5 p-8 flex flex-col justify-center">
-                                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{featuredProject.title}</h3>
-                                    <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+                                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">{featuredProject.title}</h3>
+                                    <p className="text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
                                         {featuredProject.description}
                                     </p>
                                     <div className="flex gap-2 mb-8">
-                                        <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full text-xs font-medium uppercase tracking-wider">
+                                        <span className="px-3 py-1 glass-panel text-black dark:text-white rounded-full text-xs font-bold uppercase tracking-wider">
                                             {featuredProject.category}
                                         </span>
                                     </div>
                                     <div className="flex gap-4 mt-auto">
                                         {featuredProject.projectUrl && (
-                                            <a href={featuredProject.projectUrl} target="_blank" rel="noopener noreferrer" className="flex-1 bg-[#1a73e8] dark:bg-[#8AB4F8] hover:bg-[#1557b0] dark:hover:bg-[#aecbfa] text-white dark:text-[#202124] py-3 rounded-lg font-medium text-center transition-colors shadow-sm">
+                                            <a href={featuredProject.projectUrl} target="_blank" rel="noopener noreferrer" className="flex-1 bg-black dark:bg-white text-white dark:text-black hover:bg-[#222] dark:hover:bg-gray-200 py-3 rounded-xl font-bold text-center transition-all shadow-lg">
                                                 View Live
                                             </a>
                                         )}
                                         {featuredProject.downloadUrl && (
-                                            <a href={featuredProject.downloadUrl} target="_blank" rel="noopener noreferrer" className="flex-1 bg-white dark:bg-[#303134] border border-[#dadce0] dark:border-[#5f6368] hover:border-[#1a73e8] dark:hover:border-[#8AB4F8] text-[#202124] dark:text-[#E8EAED] py-3 rounded-lg font-medium text-center transition-colors shadow-sm">
+                                            <a href={featuredProject.downloadUrl} target="_blank" rel="noopener noreferrer" className="flex-1 glass-panel hover:scale-105 py-3 rounded-xl font-bold text-center transition-all text-black dark:text-white">
                                                 Download APK
                                             </a>
                                         )}
@@ -352,9 +354,13 @@ const Home = () => {
                                 </AnimatedSection>
                             ))
                         ) : (
-                            <div className="col-span-full py-20 text-center border border-dashed border-[#dadce0] dark:border-[#5f6368] rounded-2xl bg-white/50 dark:bg-[#202124]/50 backdrop-blur-sm">
-                                <p className="text-[#5f6368] dark:text-[#9AA0A6] text-lg">No projects added yet.</p>
-                                <a href="/admin" className="text-[#1a73e8] dark:text-[#8AB4F8] hover:underline mt-2 inline-block">
+                            <div className="col-span-full py-24 text-center glass-panel rounded-3xl flex flex-col items-center justify-center border-dashed border-2 dark:border-white/10 border-black/10">
+                                <div className="bg-gray-100 dark:bg-white/5 p-4 rounded-full mb-4">
+                                    <FolderOpen size={32} className="text-slate-400 dark:text-white" />
+                                </div>
+                                <h3 className="text-xl font-bold text-black dark:text-white mb-2">No Projects Found</h3>
+                                <p className="text-black/60 dark:text-gray-400 text-md max-w-sm mx-auto mb-6">You haven't added any projects to your portfolio yet. Head over to the admin dashboard to create your first one.</p>
+                                <a href="/admin" className="px-8 py-3 btn-3d inline-block mt-2 rounded-full">
                                     Manage Projects
                                 </a>
                             </div>
@@ -369,18 +375,20 @@ const Home = () => {
 
             {/* Contact Section */}
             <section id="contact" className="max-w-3xl mx-auto px-6 pb-24 relative z-10">
-                <AnimatedSection delay={0.2} className="bg-white dark:bg-[#202124] rounded-2xl shadow-sm border border-[#dadce0] dark:border-[#3c4043] p-8 md:p-12 text-center">
-                    <h2 className="text-3xl font-bold text-[#202124] dark:text-white mb-4">Let's Connect</h2>
-                    <p className="text-[#5f6368] dark:text-[#9AA0A6] mb-8 max-w-lg mx-auto">
+                <AnimatedSection delay={0.2} className="glass-panel rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+                    <div className="absolute inset-0 pointer-events-none"></div>
+
+                    <h2 className="text-3xl font-heading text-glossy mb-4">Let's Connect</h2>
+                    <p className="text-black/80 dark:text-gray-300 mb-8 max-w-lg mx-auto">
                         Have a project in mind, or just want to say hi? Send me a message and I'll get back to you as soon as I can.
                     </p>
 
-                    <form onSubmit={handleContactSubmit} className="space-y-4 max-w-md mx-auto text-left">
+                    <form onSubmit={handleContactSubmit} className="space-y-4 max-w-md mx-auto text-left relative z-10">
                         <div>
-                            <label className="block text-sm font-medium text-[#5f6368] dark:text-[#9AA0A6] mb-1">Name</label>
+                            <label className="block text-sm font-bold text-black dark:text-gray-300 mb-1">Name</label>
                             <input
                                 type="text"
-                                className="w-full bg-[#f8f9fa] dark:bg-[#303134] border border-[#dadce0] dark:border-[#5f6368] rounded-xl px-4 py-3 text-[#202124] dark:text-white focus:ring-2 focus:ring-[#1a73e8] focus:border-transparent outline-none transition-all"
+                                className="w-full bg-gray-100/50 dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-black dark:text-white focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent outline-none transition-all placeholder-black/40 dark:placeholder-gray-500"
                                 placeholder="John Doe"
                                 value={contactForm.name}
                                 onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
@@ -388,10 +396,10 @@ const Home = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-[#5f6368] dark:text-[#9AA0A6] mb-1">Email</label>
+                            <label className="block text-sm font-bold text-black dark:text-gray-300 mb-1">Email</label>
                             <input
                                 type="email"
-                                className="w-full bg-[#f8f9fa] dark:bg-[#303134] border border-[#dadce0] dark:border-[#5f6368] rounded-xl px-4 py-3 text-[#202124] dark:text-white focus:ring-2 focus:ring-[#1a73e8] focus:border-transparent outline-none transition-all"
+                                className="w-full bg-gray-100/50 dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-black dark:text-white focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent outline-none transition-all placeholder-black/40 dark:placeholder-gray-500"
                                 placeholder="john@example.com"
                                 value={contactForm.email}
                                 onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
@@ -399,10 +407,10 @@ const Home = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-[#5f6368] dark:text-[#9AA0A6] mb-1">Message</label>
+                            <label className="block text-sm font-bold text-black dark:text-gray-300 mb-1">Message</label>
                             <textarea
                                 rows={4}
-                                className="w-full bg-[#f8f9fa] dark:bg-[#303134] border border-[#dadce0] dark:border-[#5f6368] rounded-xl px-4 py-3 text-[#202124] dark:text-white focus:ring-2 focus:ring-[#1a73e8] focus:border-transparent outline-none transition-all resize-none"
+                                className="w-full bg-gray-100/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-black dark:text-white focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent outline-none transition-all resize-none placeholder-gray-400"
                                 placeholder="What's on your mind?"
                                 value={contactForm.message}
                                 onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
@@ -411,7 +419,7 @@ const Home = () => {
                         </div>
 
                         {submitMessage.text && (
-                            <div className={`p-3 rounded-xl text-sm ${submitMessage.type === 'error' ? 'bg-red-50 text-red-600 dark:bg-red-900/20' : 'bg-green-50 text-green-600 dark:bg-green-900/20'} border ${submitMessage.type === 'error' ? 'border-red-200 dark:border-red-800' : 'border-green-200 dark:border-green-800'}`}>
+                            <div className={`p-3 rounded-xl text-sm ${submitMessage.type === 'error' ? 'bg-red-50 text-red-600 dark:bg-red-900/40 dark:text-red-400' : 'bg-green-50 text-green-600 dark:bg-green-900/40 dark:text-green-400'} border ${submitMessage.type === 'error' ? 'border-red-200 dark:border-red-800' : 'border-green-200 dark:border-green-800'}`}>
                                 {submitMessage.text}
                             </div>
                         )}
@@ -419,7 +427,7 @@ const Home = () => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full bg-[#1a73e8] dark:bg-[#8AB4F8] hover:bg-[#1557b0] dark:hover:bg-[#aecbfa] text-white dark:text-[#202124] py-3 rounded-xl font-medium transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="w-full py-4 btn-3d flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:border-b-[4px]"
                         >
                             {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : null}
                             {isSubmitting ? 'Sending...' : 'Send Message'}
@@ -428,9 +436,9 @@ const Home = () => {
                 </AnimatedSection>
             </section>
 
-            <footer className="border-t border-[#dadce0] dark:border-[#3c4043]/50 py-12 text-center bg-[#f8f9fa]/80 dark:bg-[#202124]/80 backdrop-blur-md transition-colors relative z-10">
-                <p className="text-[#5f6368] dark:text-[#9AA0A6] text-sm">
-                    © {new Date().getFullYear()} {profile.name}. Built with React & Firebase.
+            <footer className="border-t border-gray-200 dark:border-white/10 py-12 text-center bg-gray-50/80 dark:bg-black/40 backdrop-blur-md transition-colors relative z-10">
+                <p className="text-black/70 dark:text-gray-400 text-sm">
+                    © {new Date().getFullYear()} {profile.name}. All rights reserved.
                 </p>
             </footer>
 

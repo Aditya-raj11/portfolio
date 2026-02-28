@@ -32,7 +32,7 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, userName }) => {
                 {/* Toolbar */}
                 <div className="h-16 bg-[#303134] flex items-center justify-between px-4 border-b border-[#3c4043]">
                     <div className="flex items-center gap-3 text-white">
-                        <div className="p-2 bg-blue-600/20 rounded text-blue-400">
+                        <div className="p-2 bg-white/10 rounded text-white">
                             <FileText size={20} />
                         </div>
                         <div>

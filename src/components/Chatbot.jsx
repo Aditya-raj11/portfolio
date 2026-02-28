@@ -137,12 +137,12 @@ const Chatbot = forwardRef((props, ref) => {
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end font-sans">
             {/* Chat Window */}
             {isOpen && (
-                <div className="bg-white dark:bg-[#1e1f20] w-[350px] md:w-[400px] rounded-3xl shadow-2xl border border-gray-200 dark:border-[#3c4043] overflow-hidden mb-4 flex flex-col transition-all duration-300 animate-in slide-in-from-bottom-10 fade-in ring-1 ring-black/5">
+                <div className="glass-panel w-[350px] md:w-[400px] rounded-3xl overflow-hidden mb-4 flex flex-col transition-all duration-300 animate-in slide-in-from-bottom-10 fade-in border border-gray-200 dark:border-white/20 shadow-2xl">
 
                     {/* Header */}
-                    <div className="bg-white dark:bg-[#1e1f20] p-4 flex items-center justify-between border-b border-gray-100 dark:border-[#3c4043]">
+                    <div className="p-4 flex items-center justify-between border-b border-black/10 dark:border-white/10">
                         <div className="flex items-center gap-3">
-                            <div className={`rounded-xl overflow-hidden shadow-lg shadow-blue-500/20 flex items-center justify-center ${avatarUrl ? 'w-9 h-9' : 'bg-gradient-to-tr from-blue-500 to-purple-500 p-2 text-white'}`}>
+                            <div className={`rounded-xl overflow-hidden shadow-sm flex items-center justify-center ${avatarUrl ? 'w-9 h-9' : 'bg-black dark:bg-white text-white dark:text-black p-2'}`}>
                                 {avatarUrl ? (
                                     <img src={avatarUrl} alt="AI" className="w-full h-full object-cover" />
                                 ) : (
@@ -150,8 +150,8 @@ const Chatbot = forwardRef((props, ref) => {
                                 )}
                             </div>
                             <div>
-                                <h3 className="font-bold text-gray-900 dark:text-white text-sm">Portfolio AI</h3>
-                                <p className="text-xs text-blue-500 font-medium flex items-center gap-1">
+                                <h3 className="font-bold text-glossy font-heading text-sm">Portfolio AI</h3>
+                                <p className="text-xs text-black/60 dark:text-gray-400 font-medium flex items-center gap-1">
                                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> Online
                                 </p>
                             </div>
@@ -168,7 +168,7 @@ const Chatbot = forwardRef((props, ref) => {
 
                     {/* Messages Area */}
                     <div
-                        className="h-[400px] overflow-y-auto p-4 space-y-6 bg-gray-50 dark:bg-[#0b0c0d] scroll-smooth"
+                        className="h-[400px] overflow-y-auto p-4 space-y-6 bg-transparent scroll-smooth z-10"
                         data-lenis-prevent // Prevents Lenis from hijacking scroll
                     >
                         {messages.map((msg, idx) => (
@@ -176,7 +176,7 @@ const Chatbot = forwardRef((props, ref) => {
 
                                 {/* Avatar */}
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden ${msg.role === 'assistant'
-                                    ? 'bg-gradient-to-tr from-blue-500 to-purple-500 text-white shadow-md'
+                                    ? 'bg-black dark:bg-white text-white dark:text-black shadow-md'
                                     : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-300'
                                     }`}>
                                     {msg.role === 'assistant' ? (
@@ -185,9 +185,9 @@ const Chatbot = forwardRef((props, ref) => {
                                 </div>
 
                                 {/* Bubble */}
-                                <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${msg.role === 'user'
-                                    ? 'bg-blue-600 text-white rounded-tr-sm'
-                                    : 'bg-white dark:bg-[#1e1f20] text-gray-800 dark:text-gray-200 border border-gray-100 dark:border-[#3c4043] rounded-tl-sm'
+                                <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === 'user'
+                                    ? 'bg-gray-800 dark:bg-gray-200 text-white dark:text-black rounded-tr-sm shadow-md'
+                                    : 'glass-panel text-black dark:text-gray-200 rounded-tl-sm'
                                     }`}>
                                     {/* Markdown Content */}
                                     <div className="prose dark:prose-invert prose-sm max-w-none">
@@ -199,7 +199,7 @@ const Chatbot = forwardRef((props, ref) => {
                                                 ul: ({ node, ...props }) => <ul className="list-disc ml-4 mb-2 space-y-1" {...props} />,
                                                 ol: ({ node, ...props }) => <ol className="list-decimal ml-4 mb-2 space-y-1" {...props} />,
                                                 li: ({ node, ...props }) => <li className="pl-1" {...props} />,
-                                                a: ({ node, ...props }) => <a className="text-blue-200 hover:text-white underline cursor-pointer" target="_blank" rel="noopener noreferrer" {...props} />,
+                                                a: ({ node, ...props }) => <a className="text-black dark:text-white hover:opacity-80 underline cursor-pointer" target="_blank" rel="noopener noreferrer" {...props} />,
                                                 strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
                                                 code: ({ node, inline, className, children, ...props }) => {
                                                     return inline ?
@@ -217,10 +217,10 @@ const Chatbot = forwardRef((props, ref) => {
 
                         {isLoading && (
                             <div className="flex gap-3">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
+                                <div className="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center flex-shrink-0">
                                     <Loader2 size={14} className="animate-spin text-white" />
                                 </div>
-                                <div className="bg-white dark:bg-[#1e1f20] px-4 py-3 rounded-2xl rounded-tl-sm border border-gray-100 dark:border-[#3c4043] shadow-sm flex gap-1 items-center">
+                                <div className="glass-panel px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm flex gap-1 items-center">
                                     <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
                                     <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
                                     <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
@@ -231,21 +231,21 @@ const Chatbot = forwardRef((props, ref) => {
                     </div>
 
                     {/* Input Area */}
-                    <div className="p-4 bg-white dark:bg-[#1e1f20] border-t border-gray-100 dark:border-[#3c4043]">
-                        <div className="flex gap-2 bg-gray-100 dark:bg-[#303134] p-1.5 rounded-full border border-transparent focus-within:border-blue-500/50 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
+                    <div className="p-4 border-t border-black/10 dark:border-white/10 z-10">
+                        <div className="flex gap-2 bg-black/5 dark:bg-black/40 p-1.5 rounded-full border border-transparent focus-within:border-gray-800/50 dark:focus-within:border-white/50 focus-within:ring-2 focus-within:ring-black/20 dark:focus-within:ring-white/20 transition-all">
                             <input
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                                 placeholder="Message..."
-                                className="flex-1 bg-transparent text-gray-900 dark:text-white px-4 py-2 text-sm focus:outline-none"
+                                className="flex-1 bg-transparent text-black dark:text-white px-4 py-2 text-sm focus:outline-none placeholder-black/50 dark:placeholder-white/50"
                                 disabled={isLoading}
                             />
                             <button
                                 onClick={handleSend}
                                 disabled={isLoading || !input.trim()}
-                                className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full transition-all disabled:opacity-50 disabled:scale-95 shadow-md flex-shrink-0"
+                                className="btn-3d p-2 rounded-full flex-shrink-0 disabled:opacity-50 disabled:scale-95 disabled:border-b-[4px] disabled:transform-none flex items-center justify-center"
                             >
                                 <Send size={16} className={isLoading ? 'hidden' : 'ml-0.5'} />
                                 {isLoading && <Loader2 size={16} className="animate-spin" />}
@@ -262,10 +262,10 @@ const Chatbot = forwardRef((props, ref) => {
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="group flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95"
+                    className="group flex items-center gap-3 px-6 py-4 bg-[#0a0a0a] hover:bg-black border border-white/20 text-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.5)] dark:shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all hover:scale-105 active:scale-95"
                 >
                     <Sparkles size={20} fill="currentColor" />
-                    <span className="font-semibold tracking-wide">Ask AI</span>
+                    <span className="font-semibold tracking-wide text-white">Ask AI</span>
                 </button>
             )}
         </div>

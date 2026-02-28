@@ -22,9 +22,9 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-            <div className="bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md border border-gray-700">
-                <h2 className="text-3xl font-bold text-white mb-6 text-center">Admin Login</h2>
+        <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4">
+            <div className="glass-panel p-8 rounded-xl w-full max-w-md text-white">
+                <h2 className="text-3xl font-heading text-glossy mb-6 text-center">Admin Login</h2>
 
                 {error && (
                     <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded-lg mb-4 text-sm">
@@ -38,7 +38,7 @@ const Login = () => {
                         <input
                             type="email"
                             required
-                            className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full bg-[#111] border border-white/10 rounded-lg p-3 text-white focus:ring-2 focus:ring-white outline-none"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -49,7 +49,7 @@ const Login = () => {
                         <input
                             type="password"
                             required
-                            className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full bg-[#111] border border-white/10 rounded-lg p-3 text-white focus:ring-2 focus:ring-white outline-none"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
@@ -57,7 +57,7 @@ const Login = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2"
+                        className="w-full btn-3d py-3 rounded-lg flex items-center justify-center gap-2"
                     >
                         <LogIn size={20} /> Login
                     </button>
