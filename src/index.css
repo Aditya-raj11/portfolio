@@ -12,12 +12,20 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-/* Base Styles - Glossy Theme Light/Dark */
+html::-webkit-scrollbar {
+  display: none;
+}
+
+/* Base Styles */
 body {
   @apply bg-[#f8fafc] text-black transition-colors duration-500;
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Lenis Recommended CSS */
@@ -45,56 +53,114 @@ html.lenis body {
 /* Dark Mode Overrides */
 @apply bg-[#000000] text-[#ffffff];
 
-/* Reusable Typography Classes for Glossy Look */
+/* ─── Typography ─── */
 .font-heading {
   font-family: var(--font-heading);
 }
 
 .text-glossy {
   @apply text-black;
-  text-shadow: 0px 1px 2px rgba(255, 255, 255, 1), 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
-
 .dark .text-glossy {
   @apply text-white;
-  text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.4);
 }
 
-/* Glassmorphism utility classes */
+/* Gradient headline text */
+.text-gradient {
+  background: linear-gradient(135deg, #000 0%, #555 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.dark .text-gradient {
+  background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Panels ─── */
 .glass-panel {
-  @apply bg-white/95 backdrop-blur-xl border-2 border-white;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 0 2px 4px rgba(255, 255, 255, 1);
+  @apply bg-white border border-gray-200/80;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  backdrop-filter: blur(12px);
 }
-
 .dark .glass-panel {
-  @apply bg-[#0a0a0a]/80 backdrop-blur-2xl border border-white/20;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  @apply bg-[#111111] border border-white/[0.07];
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.4);
+  backdrop-filter: blur(12px);
 }
 
-/* Glossy 3D Translucent Buttons */
+/* ─── Buttons ─── */
 .btn-3d {
-  @apply bg-white/40 backdrop-blur-xl border border-black/10 text-black font-bold rounded-full transition-all duration-300 hover:bg-white/60 border-b-[4px] border-b-black/20 active:border-b active:translate-y-[3px] shadow-sm flex items-center justify-center;
+  @apply bg-white border border-black/15 text-black font-bold rounded-full transition-all duration-200 hover:bg-gray-50 border-b-[3px] border-b-black/20 active:border-b active:translate-y-[2px] shadow-sm flex items-center justify-center;
 }
-
 .dark .btn-3d {
-  @apply bg-[#1a1a1a]/40 backdrop-blur-md text-white border border-white/20 border-b-[4px] border-b-black font-bold rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:bg-[#252525]/60 hover:border-white/30 active:border-b active:border-white/20 active:translate-y-[3px];
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.9), inset 0 2px 3px rgba(255, 255, 255, 0.1), inset 0 -2px 5px rgba(0, 0, 0, 0.5);
+  @apply bg-[#1c1c1c] text-white border border-white/15 border-b-[3px] border-b-black font-bold rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[#252525] active:border-b active:border-white/15 active:translate-y-[2px];
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
+/* Primary CTA button */
+.btn-primary {
+  @apply font-bold rounded-full flex items-center justify-center transition-all duration-200 active:translate-y-[1px];
+  background: linear-gradient(135deg, #111 0%, #333 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #222 0%, #444 100%);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35), 0 8px 24px rgba(0,0,0,0.15);
+}
+.dark .btn-primary {
+  background: linear-gradient(135deg, #fff 0%, #d4d4d4 100%);
+  color: #000;
+  box-shadow: 0 2px 8px rgba(255,255,255,0.15), 0 4px 20px rgba(255,255,255,0.08);
+}
+.dark .btn-primary:hover {
+  background: linear-gradient(135deg, #f0f0f0 0%, #c0c0c0 100%);
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-white dark:bg-[#202124];
+/* ─── Shimmer animation ─── */
+@keyframes shimmer {
+  0%   { transform: translateX(-100%) skewX(-12deg); }
+  100% { transform: translateX(200%) skewX(-12deg); }
+}
+.shimmer-hover {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+  transform: translateX(-100%) skewX(-12deg);
+  transition: none;
+}
+.shimmer-hover:hover::after {
+  animation: shimmer 0.6s ease forwards;
 }
 
-::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 dark:bg-[#3c4043];
-  border-radius: 5px;
+/* ─── Section number badge ─── */
+.section-number {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  @apply text-black/30 dark:text-white/25 uppercase;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400 dark:bg-[#5f6368];
+/* ─── Availability badge ─── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.8); }
 }
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ─── Custom Cursor ─── */
+@media (pointer: fine) {
+  body, a, button, [role="button"], input, textarea, select {
+    cursor: none !important;
+  }
+}

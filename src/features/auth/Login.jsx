@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../lib/firebase';
 import { useNavigate } from 'react-router-dom';
-import { LogIn } from 'lucide-react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../lib/firebase';
+import { Loader2, Mail, Lock, Shield, ArrowLeft, LogIn } from 'lucide-react';
+import AnimatedSection from '../../components/ui/AnimatedSection';
 
 const Login = () => {
     const [email, setEmail] = useState('');

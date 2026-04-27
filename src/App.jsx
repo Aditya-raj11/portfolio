@@ -1,14 +1,57 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
 import Lenis from 'lenis';
-import Home from './pages/Home';
-import Admin from './pages/Admin';
-import Login from './pages/Login';
-import ProtectedRoute from './components/ProtectedRoute';
+import Home from './features/portfolio/Home';
+import AdminLayout from './features/admin/AdminLayout';
+import Login from './features/auth/Login';
+import ProtectedRoute from './features/auth/components/ProtectedRoute';
+import CustomCursor from './components/ui/CustomCursor';
+import LoadingScreen from './components/ui/LoadingScreen';
+
+// Inner component so it can use useLocation (must be inside Router)
+function AppRoutes() {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
+  const [showLoader, setShowLoader] = useState(isHomePage);
+  const [dataReady, setDataReady] = useState(false);
+
+  const handleLoaderAnimDone = useCallback(() => {
+    setShowLoader(false);
+  }, []);
+
+  const handleDataReady = useCallback(() => {
+    setDataReady(true);
+  }, []);
+
+  return (
+    <>
+      {/* Only render loading screen on the home page */}
+      {isHomePage && showLoader && (
+        <LoadingScreen
+          dataReady={dataReady}
+          onComplete={handleLoaderAnimDone}
+        />
+      )}
+      <CustomCursor />
+      <Routes>
+        <Route path="/" element={<Home onReady={handleDataReady} />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </>
+  );
+}
 
 function App() {
-
-  // Initialize Lenis for smooth scrolling
+  // Initialize Lenis for smooth scrolling (only on home, but safe globally)
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -35,18 +78,7 @@ function App() {
 
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <Admin />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+      <AppRoutes />
     </Router>
   );
 }

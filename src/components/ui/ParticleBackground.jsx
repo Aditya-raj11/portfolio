@@ -35,7 +35,7 @@ const ParticleBackground = () => {
                         events: {
                             onClick: {
                                 enable: true,
-                                mode: "push",
+                                mode: "push", // Restored 'generate' functionality
                             },
                             onHover: {
                                 enable: true,
@@ -44,7 +44,7 @@ const ParticleBackground = () => {
                         },
                         modes: {
                             push: {
-                                quantity: 4,
+                                quantity: 3, 
                             },
                             repulse: {
                                 distance: 100,
@@ -54,23 +54,23 @@ const ParticleBackground = () => {
                     },
                     particles: {
                         color: {
-                            value: "#6366f1", // Indigo-500
+                            value: "#6366f1", 
                         },
                         links: {
                             color: "#6366f1",
                             distance: 150,
                             enable: true,
-                            opacity: 0.3,
+                            opacity: 0.2, // Slightly lighter so connecting lines fade smoothly
                             width: 1,
                         },
                         move: {
                             direction: "none",
                             enable: true,
                             outModes: {
-                                default: "bounce",
+                                default: "out", // **MAGIC FIX:** Particles now drift off the screen instead of being trapped, naturally and smoothly reducing the count without "popping"
                             },
-                            random: false,
-                            speed: 1, // Slow and calm
+                            random: true,
+                            speed: 0.8, 
                             straight: false,
                         },
                         number: {
@@ -78,10 +78,16 @@ const ParticleBackground = () => {
                                 enable: true,
                                 area: 800,
                             },
-                            value: 60, // Not too crowded
+                            value: 60, 
+                            limit: { value: 150 } // Increased limit so you can generate a lot before any safety bounds kick in
                         },
                         opacity: {
-                            value: 0.3,
+                            value: { min: 0.1, max: 0.5 },
+                            animation: {
+                                enable: true,
+                                speed: 0.5,
+                                sync: false, // Creates a beautiful twinkling "fade in/fade out" effect
+                            }
                         },
                         shape: {
                             type: "circle",

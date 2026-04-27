@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Download, ExternalLink, Globe, Smartphone, ChevronLeft, ChevronRight, X } from 'lucide-react';
-import ImageLightbox from './ImageLightbox';
+import { Download, ExternalLink, Globe, Smartphone, ChevronLeft, ChevronRight, Github, ImageOff } from 'lucide-react';
+import ImageLightbox from '../../../components/ui/ImageLightbox';
+import { useToast } from '../../../components/ui/Toast';
 
 const ProjectCard = ({ project }) => {
-    const { title, description, imageUrl, imageUrls, category, projectUrl, downloadUrl } = project;
+    const { title, description, imageUrl, imageUrls, category, projectUrl, downloadUrl, githubUrl, techStack } = project;
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+    const toast = useToast();
 
     // Combine single imageUrl and imageUrls array into one list for the carousel
     const images = [imageUrl, ...(imageUrls || [])].filter(Boolean);
@@ -29,7 +31,7 @@ const ProjectCard = ({ project }) => {
             e.stopPropagation();
         }
         if (uniqueImages.length === 0) {
-            alert("No image available to preview.");
+            toast({ message: 'No image available to preview.', type: 'info' });
             return;
         }
         setIsLightboxOpen(!isLightboxOpen);
@@ -59,12 +61,19 @@ const ProjectCard = ({ project }) => {
 
     const currentImage = getDirectImageUrl(uniqueImages[currentIndex]);
 
+    // Parse tech stack – can be a comma-separated string or an array
+    const stackTags = Array.isArray(techStack)
+        ? techStack
+        : typeof techStack === 'string' && techStack.trim()
+            ? techStack.split(',').map(t => t.trim()).filter(Boolean)
+            : [];
+
     return (
         <>
             <div className="group glass-panel rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1">
                 {/* Image Area */}
                 <div
-                    className="h-52 bg-gray-100 dark:bg-black/40 relative overflow-hidden cursor-zoom-in group-image"
+                    className="h-52 bg-gray-100 dark:bg-black/40 relative overflow-hidden cursor-zoom-in"
                     onClick={toggleLightbox}
                 >
                     {currentImage ? (
@@ -83,13 +92,25 @@ const ProjectCard = ({ project }) => {
                                 }}
                             />
 
-                            {/* Overlay Gradient (Dark mode mostly) */}
-                            <div className="hidden md:block h-px flex-1 bg-gradient-to-r from-gray-300 to-transparent dark:from-gray-700 ml-8"></div>
-
-                            {/* Icons (Category) */}
+                            {/* Category Icon Badge */}
                             <div className="absolute top-3 right-3 bg-white/90 dark:bg-black/40 backdrop-blur-md p-2 rounded-full text-[#202124] dark:text-white/90 border border-gray-200 dark:border-white/10 shadow-sm">
-                                {category === 'app' ? <Smartphone size={16} /> : <Globe size={16} />}
+                                {category === 'app' ? <Smartphone size={16} /> : category === 'github' ? <Github size={16} /> : <Globe size={16} />}
                             </div>
+
+                            {/* Image Dot Indicators */}
+                            {uniqueImages.length > 1 && (
+                                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                                    {uniqueImages.map((_, i) => (
+                                        <span
+                                            key={i}
+                                            className={`block rounded-full transition-all duration-300 ${i === currentIndex
+                                                ? 'w-4 h-1.5 bg-white'
+                                                : 'w-1.5 h-1.5 bg-white/50'
+                                                }`}
+                                        />
+                                    ))}
+                                </div>
+                            )}
 
                             {/* Navigation Buttons (on hover) */}
                             {uniqueImages.length > 1 && (
@@ -110,8 +131,10 @@ const ProjectCard = ({ project }) => {
                             )}
                         </div>
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[#9AA0A6] bg-[#f8f9fa] dark:bg-[#202124]">
-                            No Preview
+                        /* Styled No Preview State */
+                        <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-600 bg-gray-50 dark:bg-[#111]">
+                            <ImageOff size={32} strokeWidth={1.5} />
+                            <span className="text-xs font-medium tracking-wide uppercase">No Preview</span>
                         </div>
                     )}
                 </div>
@@ -119,11 +142,38 @@ const ProjectCard = ({ project }) => {
                 {/* Content Area */}
                 <div className="p-6 flex flex-col flex-grow relative z-10">
                     <h3 className="text-xl font-heading text-black dark:text-white font-bold mb-2">{title}</h3>
-                    <p className="text-black/80 dark:text-gray-200 text-sm leading-relaxed mb-6 line-clamp-3">
+                    <p className="text-black/80 dark:text-gray-200 text-sm leading-relaxed mb-4 line-clamp-3">
                         {description}
                     </p>
 
+                    {/* Tech Stack Tags */}
+                    {stackTags.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mb-4">
+                            {stackTags.map(tag => (
+                                <span
+                                    key={tag}
+                                    className="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70 border border-black/10 dark:border-white/10"
+                                >
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+
                     <div className="mt-auto flex gap-3 pt-4 border-t border-gray-200 dark:border-white/10">
+                        {/* GitHub button (small) - only show if not github category */}
+                        {githubUrl && category !== 'github' && (
+                            <a
+                                href={githubUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 rounded-xl glass-panel hover:bg-slate-100 dark:hover:bg-white/10 text-black dark:text-white transition-all flex items-center justify-center"
+                                title="View on GitHub"
+                            >
+                                <Github size={18} />
+                            </a>
+                        )}
+
                         {category === 'app' && downloadUrl && (
                             <a
                                 href={downloadUrl}
@@ -146,7 +196,18 @@ const ProjectCard = ({ project }) => {
                             </a>
                         )}
 
-                        {(!downloadUrl && !projectUrl) && (
+                        {category === 'github' && githubUrl && (
+                            <a
+                                href={githubUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 py-2 px-4 rounded-xl glass-panel hover:bg-slate-50 dark:hover:bg-white/10 text-black dark:text-white text-sm font-bold text-center transition-all flex items-center justify-center gap-2"
+                            >
+                                <Github size={16} /> Repository
+                            </a>
+                        )}
+
+                        {(!downloadUrl && !projectUrl && !githubUrl) && (
                             <div className="text-slate-400 dark:text-slate-500 text-sm italic w-full text-center">Coming Soon</div>
                         )}
                     </div>

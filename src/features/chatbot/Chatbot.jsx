@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } f
 import { MessageSquare, Send, X, Sparkles, User, Loader2, RefreshCw } from 'lucide-react';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
-import { db, functions } from '../lib/firebase';
+import { db, functions } from '../../lib/firebase';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -262,10 +262,19 @@ const Chatbot = forwardRef((props, ref) => {
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="group flex items-center gap-3 px-6 py-4 bg-[#0a0a0a] hover:bg-black border border-white/20 text-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.5)] dark:shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all hover:scale-105 active:scale-95"
+                    className="group relative flex items-center gap-3 px-6 py-4 rounded-full overflow-hidden shadow-[0_8px_32px_rgba(99,102,241,0.25)] transition-all hover:scale-105 active:scale-95 hover:shadow-[0_8px_32px_rgba(99,102,241,0.4)] border border-indigo-300 dark:border-indigo-500/30 bg-gradient-to-br from-indigo-500 to-purple-600 z-50"
                 >
-                    <Sparkles size={20} fill="currentColor" />
-                    <span className="font-semibold tracking-wide text-white">Ask AI</span>
+                    {/* Animated shine */}
+                    <div className="absolute top-0 -inset-full h-full w-1/2 z-0 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white/40 opacity-40 group-hover:animate-[shimmer_1.5s_infinite]" />
+                    
+                    <Sparkles size={20} className="text-white z-10 group-hover:animate-pulse" />
+                    <span className="font-bold tracking-wide text-white z-10">Ask AI</span>
+                    
+                    {/* Ping notification effect */}
+                    <span className="absolute -top-1 -right-1 flex h-4 w-4 z-20">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-300 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-4 w-4 bg-purple-400 border-2 border-[#121212]"></span>
+                    </span>
                 </button>
             )}
         </div>

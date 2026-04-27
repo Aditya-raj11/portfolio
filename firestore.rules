@@ -13,6 +13,24 @@ service cloud.firestore {
       allow write: if isAuthenticated();
     }
 
+    // Experiences: Public Read, Admin Write
+    match /experiences/{experienceId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Certifications: Public Read, Admin Write
+    match /certifications/{certificationId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Achievements: Public Read, Admin Write
+    match /achievements/{achievementId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
     // Settings Profile (Socials, Resume): Public Read, Admin Write
     match /settings/profile {
       allow read: if true;
@@ -30,6 +48,11 @@ service cloud.firestore {
       allow create: if true;
       allow read, delete: if isAuthenticated();
       allow update: if false;
+    }
+
+    // Stats: Public Read/Write for visitor tracking
+    match /stats/{document=**} {
+      allow read, write: if true;
     }
 
     // Default deny
