@@ -545,7 +545,7 @@ const AdminLayout = () => {
                     </div>
                 </header>
 
-                {activeTab === 'dashboard' && <DashboardTab totalVisits={totalVisits} visitorStats={visitorStats} />}
+                {activeTab === 'dashboard' && <DashboardTab totalVisits={totalVisits} visitorStats={visitorStats} projects={projects} />}
                 {activeTab === 'messages' && <MessagesTab messages={messages} deleteMessage={deleteMessage} markMessageRead={markMessageRead} />}
                 {activeTab === 'projects' &&
                     <ProjectsTab

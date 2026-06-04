@@ -5,6 +5,8 @@ import ImageLightbox from '../../../components/ui/ImageLightbox';
 import SpotlightCard from '../../../components/ui/SpotlightCard';
 import DetailModal from '../../../components/ui/DetailModal';
 import { useToast } from '../../../components/ui/Toast';
+import { db } from '../../../lib/firebase';
+import { doc, updateDoc, increment } from 'firebase/firestore';
 
 const ProjectCard = ({ project, large = false }) => {
     const { title, description, imageUrl, imageUrls, category, projectUrl, downloadUrl, githubUrl, techStack } = project;
@@ -72,10 +74,21 @@ const ProjectCard = ({ project, large = false }) => {
             ? techStack.split(',').map(t => t.trim()).filter(Boolean)
             : [];
 
-    const handleCardClick = (e) => {
+    const handleCardClick = async (e) => {
         // Don't open detail modal if clicking on interactive elements
         if (e.target.closest('a') || e.target.closest('button')) return;
         setIsDetailOpen(true);
+
+        if (project.id) {
+            try {
+                const projectRef = doc(db, "projects", project.id);
+                await updateDoc(projectRef, {
+                    views: increment(1)
+                });
+            } catch (error) {
+                console.error("Error incrementing project view count:", error);
+            }
+        }
     };
 
     return (
