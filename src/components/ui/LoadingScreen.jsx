@@ -237,7 +237,7 @@ const LoadingScreen = ({ dataReady, onComplete }) => {
                         className="absolute bottom-10 text-xs tracking-[0.3em] uppercase"
                         style={{ color: textMuted }}
                     >
-                        Portfolio · 2025
+                        Portfolio
                     </motion.p>
                 </motion.div>
             )}
