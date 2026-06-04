@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
 
+const LETTERS = ['A', 'd', 'i', 't', 'y', 'a', '.'];
+
 const LoadingScreen = ({ dataReady, onComplete }) => {
     const [progress, setProgress] = useState(0);
     const [readyToScroll, setReadyToScroll] = useState(false);
@@ -25,6 +27,31 @@ const LoadingScreen = ({ dataReady, onComplete }) => {
             localStorage.setItem('theme', 'light');
         }
     }, [isDark]);
+
+    // Lock scrolling (both body and Lenis) during the loading process and exit transition
+    useEffect(() => {
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        if (window.__lenis) {
+            window.__lenis.stop();
+        }
+
+        const checkLenisInterval = setInterval(() => {
+            if (window.__lenis) {
+                window.__lenis.stop();
+                clearInterval(checkLenisInterval);
+            }
+        }, 50);
+
+        return () => {
+            clearInterval(checkLenisInterval);
+            document.body.style.overflow = originalOverflow || 'unset';
+            if (window.__lenis) {
+                window.__lenis.start();
+            }
+        };
+    }, []);
 
     useEffect(() => {
         dataReadyRef.current = dataReady;
@@ -94,7 +121,26 @@ const LoadingScreen = ({ dataReady, onComplete }) => {
         };
     }, [readyToScroll, onComplete]);
 
-    const letters = ['A', 'd', 'i', 't', 'y', 'a'];
+    const [visibleCount, setVisibleCount] = useState(0);
+
+    // Typewriter effect for spelling "Aditya."
+    useEffect(() => {
+        let timerId;
+        const typeNext = (index) => {
+            if (index <= LETTERS.length) {
+                setVisibleCount(index);
+                const randomDelay = index === 0
+                    ? 300 // Initial delay before typing starts
+                    : Math.random() * 80 + 100; // Snappy human-like speed
+                timerId = setTimeout(() => typeNext(index + 1), randomDelay);
+            }
+        };
+        typeNext(0);
+        return () => {
+            if (timerId) clearTimeout(timerId);
+        };
+    }, []);
+
     const bg = isDark ? '#000' : '#f8fafc';
     const textPrimary = isDark ? '#ffffff' : '#000000';
     const textMuted = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)';
@@ -151,31 +197,39 @@ const LoadingScreen = ({ dataReady, onComplete }) => {
 
                     {/* Name */}
                     <div className="relative flex items-end gap-1 mb-16">
-                        {letters.map((letter, i) => (
-                            <motion.span
-                                key={i}
-                                initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
-                                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                                transition={{ delay: 0.1 + i * 0.07, duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
-                                className="select-none"
-                                style={{
-                                    fontFamily: '"Archivo Black", sans-serif',
-                                    fontSize: i === 0 ? '5rem' : '3.5rem',
-                                    lineHeight: 1,
-                                    color: i === 0 ? textPrimary : textMuted,
-                                }}
-                            >
-                                {letter}
-                            </motion.span>
-                        ))}
+                        {LETTERS.map((letter, i) => {
+                            const isVisible = i < visibleCount;
+                            if (!isVisible) return null;
+
+                            return (
+                                <motion.span
+                                    key={i}
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.08, ease: 'easeOut' }}
+                                    className="select-none"
+                                    style={{
+                                        fontFamily: '"Archivo Black", sans-serif',
+                                        fontSize: i === 0 ? '5rem' : (i === 6 ? '4rem' : '3.5rem'),
+                                        lineHeight: 1,
+                                        color: (i === 0 || i === 6) ? textPrimary : textMuted,
+                                    }}
+                                >
+                                    {letter}
+                                </motion.span>
+                            );
+                        })}
+                        {/* Typing Cursor */}
                         <motion.span
-                            initial={{ opacity: 0, scale: 0 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.65, duration: 0.4, ease: 'backOut' }}
-                            style={{ fontSize: '4rem', lineHeight: 1, color: textPrimary }}
-                        >
-                            .
-                        </motion.span>
+                            animate={{ opacity: [1, 0, 1] }}
+                            transition={{ duration: 0.8, repeat: Infinity, ease: "steps(2)" }}
+                            className="w-[4px] inline-block ml-1"
+                            style={{
+                                height: visibleCount <= 1 ? '4rem' : '2.8rem',
+                                backgroundColor: textPrimary,
+                                marginBottom: visibleCount === 7 ? '0.2rem' : '0.4rem',
+                            }}
+                        />
                     </div>
 
                     {/* Progress bar */}

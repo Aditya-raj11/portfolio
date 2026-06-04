@@ -1,9 +1,9 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Image as ImageIcon, Star, Trash2 } from 'lucide-react';
+import { GripVertical, Image as ImageIcon, Star, Trash2, Pencil } from 'lucide-react';
 
-const SortableProjectItem = ({ project, onToggleFeatured, onDelete, onImageClick }) => {
+const SortableProjectItem = ({ project, onToggleFeatured, onDelete, onEdit, onImageClick }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project.id });
 
     const style = {
@@ -57,6 +57,13 @@ const SortableProjectItem = ({ project, onToggleFeatured, onDelete, onImageClick
                     title={project.featured ? "Unfeature" : "Spotlight this project"}
                 >
                     <Star size={18} fill={project.featured ? "currentColor" : "none"} />
+                </button>
+                <button
+                    onClick={() => onEdit(project)}
+                    className="p-2 text-gray-400 hover:text-black dark:hover:text-white hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors"
+                    title="Edit Project"
+                >
+                    <Pencil size={18} />
                 </button>
                 <button
                     onClick={() => onDelete(project)}

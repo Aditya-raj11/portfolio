@@ -65,6 +65,7 @@ const AdminLayout = () => {
     const [formData, setFormData] = useState({
         title: '', description: '', category: 'app', projectUrl: '', githubUrl: '', techStack: '',
     });
+    const [editingProjectId, setEditingProjectId] = useState(null);
 
     // Form State (Generic Items like Experience/Certifications/Achievements)
     const [genericFormData, setGenericFormData] = useState({
@@ -281,6 +282,30 @@ const AdminLayout = () => {
 
     const removeImageUrl = (index) => setImageUrls(imageUrls.filter((_, i) => i !== index));
 
+    const handleEditStart = (project) => {
+        setEditingProjectId(project.id);
+        setFormData({
+            title: project.title || '',
+            description: project.description || '',
+            category: project.category || 'app',
+            projectUrl: project.projectUrl || '',
+            githubUrl: project.githubUrl || '',
+            techStack: project.techStack || '',
+            downloadUrl: project.downloadUrl || ''
+        });
+        setImageUrls(project.imageUrls || (project.imageUrl ? [project.imageUrl] : []));
+        setProjectImageFiles([]);
+        setApkFile(null);
+    };
+
+    const handleEditCancel = () => {
+        setEditingProjectId(null);
+        setFormData({ title: '', description: '', category: 'app', projectUrl: '', githubUrl: '', techStack: '' });
+        setImageUrls([]);
+        setProjectImageFiles([]);
+        setApkFile(null);
+    };
+
     const handleSaveAiSettings = async (e) => {
         e.preventDefault();
         setSavingSettings(true);
@@ -370,19 +395,43 @@ const AdminLayout = () => {
                 try { downloadUrl = await uploadFile(apkFile, `apks/${Date.now()}_${apkFile.name}`); } catch (err) { console.error("APK upload failed:", err); alert("APK upload failed. Check Storage rules."); }
             }
 
-            await addDoc(collection(db, "projects"), {
-                ...formData, 
-                projectUrl: normalizeUrl(formData.projectUrl), 
-                githubUrl: normalizeUrl(formData.githubUrl),
-                imageUrl: finalImageUrls[0] || '', imageUrls: finalImageUrls, downloadUrl,
-                createdAt: Date.now(), order: projects.length
-            });
+            if (editingProjectId) {
+                const projectRef = doc(db, "projects", editingProjectId);
+                const existingProj = projects.find(p => p.id === editingProjectId);
+                const orderVal = existingProj && existingProj.order !== undefined ? existingProj.order : projects.length;
+                const createdVal = existingProj && existingProj.createdAt ? existingProj.createdAt : Date.now();
+                const featuredVal = existingProj && existingProj.featured ? existingProj.featured : false;
 
-            alert("Project added successfully!");
+                await setDoc(projectRef, {
+                    ...formData,
+                    projectUrl: normalizeUrl(formData.projectUrl),
+                    githubUrl: normalizeUrl(formData.githubUrl),
+                    imageUrl: finalImageUrls[0] || '',
+                    imageUrls: finalImageUrls,
+                    downloadUrl,
+                    createdAt: createdVal,
+                    order: orderVal,
+                    featured: featuredVal
+                });
+
+                alert("Project updated successfully!");
+                setEditingProjectId(null);
+            } else {
+                await addDoc(collection(db, "projects"), {
+                    ...formData, 
+                    projectUrl: normalizeUrl(formData.projectUrl), 
+                    githubUrl: normalizeUrl(formData.githubUrl),
+                    imageUrl: finalImageUrls[0] || '', imageUrls: finalImageUrls, downloadUrl,
+                    createdAt: Date.now(), order: projects.length,
+                    featured: false
+                });
+                alert("Project added successfully!");
+            }
+
             setFormData({ title: '', description: '', category: 'app', projectUrl: '', githubUrl: '', techStack: '' });
             setImageUrls([]); setCurrentImageUrl(''); setImageFile(null); setProjectImageFiles([]); setApkFile(null);
             fetchProjects();
-        } catch (error) { console.error("Error adding project: ", error); alert("Error adding project: " + error.message); } finally { setLoading(false); setUploadProgress(0); }
+        } catch (error) { console.error("Error submitting project: ", error); alert("Error saving project: " + error.message); } finally { setLoading(false); setUploadProgress(0); }
     };
 
     const handleGenericSubmit = async (e, collectionName) => {
@@ -510,6 +559,7 @@ const AdminLayout = () => {
                         sensors={sensors} handleDragEnd={handleDragEnd}
                         handleToggleFeatured={handleToggleFeatured} handleDelete={handleDelete}
                         setCurrentLightboxImages={setCurrentLightboxImages} setCurrentLightboxIndex={setCurrentLightboxIndex} setLightboxOpen={setLightboxOpen}
+                        editingProjectId={editingProjectId} onCancelEdit={handleEditCancel} onEdit={handleEditStart}
                     />
                 }
                 {activeTab === 'experiences' &&

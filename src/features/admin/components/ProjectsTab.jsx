@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Plus, Loader2, Image as ImageIcon, Smartphone, X } from 'lucide-react';
+import { Upload, Plus, Loader2, Image as ImageIcon, Smartphone, X, Pencil } from 'lucide-react';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import SortableProjectItem from './SortableProjectItem';
@@ -14,15 +14,27 @@ const ProjectsTab = ({
     fetching, projects,
     sensors, handleDragEnd,
     handleToggleFeatured, handleDelete,
-    setCurrentLightboxImages, setCurrentLightboxIndex, setLightboxOpen
+    setCurrentLightboxImages, setCurrentLightboxIndex, setLightboxOpen,
+    editingProjectId, onCancelEdit, onEdit
 }) => {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Add Project Form */}
             <div className="lg:col-span-1">
                 <div className="glass-panel text-black dark:text-gray-300 rounded-xl shadow-sm overflow-hidden transition-colors">
-                    <div className="p-6 border-b border-black/10 dark:border-white/10">
-                        <h2 className="text-lg font-semibold font-heading text-glossy">Add New Project</h2>
+                    <div className="p-6 border-b border-black/10 dark:border-white/10 flex justify-between items-center">
+                        <h2 className="text-lg font-semibold font-heading text-glossy">
+                            {editingProjectId ? 'Edit Project' : 'Add New Project'}
+                        </h2>
+                        {editingProjectId && (
+                            <button
+                                type="button"
+                                onClick={onCancelEdit}
+                                className="text-xs font-semibold px-2.5 py-1 rounded bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-gray-700 dark:text-gray-300 transition-colors"
+                            >
+                                Cancel Edit
+                            </button>
+                        )}
                     </div>
                     <div className="p-6">
                         <form onSubmit={handleSubmit} className="space-y-5">
@@ -208,18 +220,35 @@ const ProjectsTab = ({
                                 </div>
                             )}
 
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="w-full btn-3d py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm disabled:opacity-70 disabled:border-b-[4px] disabled:transform-none"
-                            >
-                                {loading ? (
-                                    <div className="flex items-center gap-2">
-                                        <Loader2 className="animate-spin" size={18} />
-                                        {uploadProgress > 0 ? `Uploading... ${Math.round(uploadProgress)}%` : 'Processing...'}
-                                    </div>
-                                ) : <><Plus size={18} /> Create Project</>}
-                            </button>
+                            <div className="flex gap-3">
+                                {editingProjectId && (
+                                    <button
+                                        type="button"
+                                        onClick={onCancelEdit}
+                                        className="flex-1 py-2.5 border border-black/10 dark:border-white/10 rounded-lg flex items-center justify-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                )}
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="flex-1 btn-3d py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm disabled:opacity-70 disabled:border-b-[4px] disabled:transform-none"
+                                >
+                                    {loading ? (
+                                        <div className="flex items-center gap-2">
+                                            <Loader2 className="animate-spin" size={18} />
+                                            {uploadProgress > 0 ? `Uploading... ${Math.round(uploadProgress)}%` : 'Processing...'}
+                                        </div>
+                                    ) : (
+                                        editingProjectId ? (
+                                            <><Pencil size={18} /> Update Project</>
+                                        ) : (
+                                            <><Plus size={18} /> Create Project</>
+                                        )
+                                    )}
+                                </button>
+                            </div>
 
                             {/* Progress Bar */}
                             {loading && uploadProgress > 0 && (
@@ -268,6 +297,7 @@ const ProjectsTab = ({
                                                 project={project}
                                                 onToggleFeatured={handleToggleFeatured}
                                                 onDelete={handleDelete}
+                                                onEdit={onEdit}
                                                 onImageClick={(p) => {
                                                     if (p.imageUrl || (p.imageUrls && p.imageUrls.length > 0)) {
                                                         const images = [p.imageUrl, ...(p.imageUrls || [])].filter(Boolean);
