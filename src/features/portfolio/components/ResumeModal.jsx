@@ -1,7 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Download, ExternalLink, Printer, FileText } from 'lucide-react';
 
 const ResumeModal = ({ isOpen, onClose, resumeUrl, userName }) => {
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        setIsMobile(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
+    }, []);
     // Prevent background scrolling when modal is open
     useEffect(() => {
         if (isOpen) {
@@ -77,13 +81,41 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, userName }) => {
                 </div>
 
                 {/* PDF Viewer */}
-                <div className="flex-1 bg-[#202124] relative">
-                    <iframe
-                        src={`${resumeUrl}#toolbar=0`}
-                        className="w-full h-full"
-                        title="Resume Viewer"
-                    />
-                    {/* Fallback/Loading info could go here if iframe fails, but modern browsers handle this well */}
+                <div className="flex-1 bg-[#202124] relative flex items-center justify-center p-6 text-center">
+                    {isMobile ? (
+                        <div className="flex flex-col items-center justify-center gap-4 text-white">
+                            <div className="p-5 bg-white/10 rounded-full text-white">
+                                <FileText size={40} />
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-lg">Resume Preview Unavailable on Mobile</h4>
+                                <p className="text-sm text-gray-400 mt-1 max-w-sm">Mobile web browsers do not support direct PDF embedding. Click below to view or download my resume.</p>
+                            </div>
+                            <div className="flex flex-col sm:flex-row gap-3 mt-4 w-full max-w-xs">
+                                <a
+                                    href={resumeUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 py-3 px-5 bg-white text-black rounded-xl font-bold text-sm shadow-lg flex items-center justify-center gap-2"
+                                >
+                                    <ExternalLink size={16} /> Open Resume
+                                </a>
+                                <a
+                                    href={resumeUrl}
+                                    download
+                                    className="flex-1 py-3 px-5 bg-[#303134] text-white rounded-xl font-bold text-sm border border-[#3c4043] flex items-center justify-center gap-2"
+                                >
+                                    <Download size={16} /> Download PDF
+                                </a>
+                            </div>
+                        </div>
+                    ) : (
+                        <iframe
+                            src={`${resumeUrl}#toolbar=0`}
+                            className="w-full h-full border-none"
+                            title="Resume Viewer"
+                        />
+                    )}
                 </div>
             </div>
         </div>

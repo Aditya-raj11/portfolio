@@ -16,6 +16,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 const DetailModal = ({ isOpen, onClose, item, type = 'project', onSecureView }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [imageLoading, setImageLoading] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        setIsMobile(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
+    }, []);
 
     // Gather all images for gallery
     const getImages = () => {
@@ -213,14 +218,42 @@ const DetailModal = ({ isOpen, onClose, item, type = 'project', onSecureView }) 
                             </div>
                         )}
 
-                        {/* PDF preview for items with PDF files */}
                         {isPdf && item.imageUrl && (
-                            <div className="relative w-full h-56 sm:h-72 bg-white dark:bg-gray-900 overflow-hidden shrink-0 flex items-center justify-center">
-                                <iframe
-                                    src={`${item.imageUrl}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
-                                    title="Document Preview"
-                                    className="w-full h-full border-none"
-                                />
+                            <div className="relative w-full min-h-[220px] bg-white dark:bg-[#121212] overflow-hidden shrink-0 flex items-center justify-center p-6 text-center border-b border-gray-200/50 dark:border-white/[0.06]">
+                                {isMobile ? (
+                                    <div className="flex flex-col items-center justify-center gap-3">
+                                        <div className={`p-4 ${accent.bg} rounded-full ${accent.text} border ${accent.border}`}>
+                                            <Briefcase size={28} />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-sm text-black dark:text-white">PDF Preview Unavailable on Mobile</h4>
+                                            <p className="text-xs text-black/60 dark:text-gray-400 mt-1 max-w-xs">Mobile web browsers do not support direct PDF embedding. Click below to view or download the document.</p>
+                                        </div>
+                                        <div className="flex gap-2.5 mt-2">
+                                            <a
+                                                href={item.imageUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-black dark:bg-white text-white dark:text-black rounded-xl text-xs font-bold shadow-sm"
+                                            >
+                                                <ExternalLink size={12} /> Open Document
+                                            </a>
+                                            <a
+                                                href={item.imageUrl}
+                                                download
+                                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 rounded-xl text-xs font-bold border border-gray-200 dark:border-white/10"
+                                            >
+                                                <Download size={12} /> Download
+                                            </a>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <iframe
+                                        src={`${item.imageUrl}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
+                                        title="Document Preview"
+                                        className="w-full h-full border-none min-h-[240px]"
+                                    />
+                                )}
                                 {/* Type badge */}
                                 <div className={`absolute top-4 left-4 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 backdrop-blur-md shadow-sm bg-white/90 dark:bg-black/60 ${accent.text} border ${accent.border}`}>
                                     <TypeIcon size={13} />
