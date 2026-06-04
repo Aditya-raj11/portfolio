@@ -49,13 +49,11 @@ const DetailModal = ({ isOpen, onClose, item, type = 'project', onSecureView }) 
 
     const handlePrev = useCallback((e) => {
         e?.stopPropagation();
-        setImageLoading(true);
         setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1);
     }, [images.length]);
 
     const handleNext = useCallback((e) => {
         e?.stopPropagation();
-        setImageLoading(true);
         setCurrentImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1);
     }, [images.length]);
 
@@ -139,26 +137,35 @@ const DetailModal = ({ isOpen, onClose, item, type = 'project', onSecureView }) 
                             <div className="relative w-full h-56 sm:h-72 md:h-80 bg-gray-100 dark:bg-black/60 overflow-hidden shrink-0">
                                 {/* Loading spinner */}
                                 {imageLoading && (
-                                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                                    <div className="absolute inset-0 flex items-center justify-center z-10 bg-gray-100 dark:bg-black/60">
                                         <Loader2 className="animate-spin text-gray-400 dark:text-gray-500" size={36} />
                                     </div>
                                 )}
 
-                                <motion.img
-                                    key={currentImageIndex}
-                                    initial={{ opacity: 0, scale: 1.02 }}
-                                    animate={{ opacity: imageLoading ? 0 : 1, scale: 1 }}
-                                    transition={{ duration: 0.4 }}
-                                    src={images[currentImageIndex]}
-                                    alt={item.title}
-                                    className="w-full h-full object-cover"
-                                    onLoad={() => setImageLoading(false)}
-                                    onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = 'https://placehold.co/800x400?text=No+Image';
-                                        setImageLoading(false);
-                                    }}
-                                />
+                                <motion.div
+                                    className="flex h-full w-full"
+                                    animate={{ x: `-${currentImageIndex * 100}%` }}
+                                    transition={{ type: "spring", stiffness: 220, damping: 26 }}
+                                >
+                                    {images.map((imgUrl, idx) => (
+                                        <div key={idx} className="w-full h-full flex-shrink-0 relative">
+                                            <img
+                                                src={imgUrl}
+                                                alt={`${item.title} - ${idx + 1}`}
+                                                className="w-full h-full object-cover"
+                                                loading="eager"
+                                                onLoad={() => {
+                                                    if (idx === 0) setImageLoading(false);
+                                                }}
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = 'https://placehold.co/800x400?text=No+Image';
+                                                    if (idx === 0) setImageLoading(false);
+                                                }}
+                                            />
+                                        </div>
+                                    ))}
+                                </motion.div>
 
                                 {/* Gradient overlay at bottom for text readability */}
                                 <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white/80 dark:from-[#0f0f0f]/80 to-transparent pointer-events-none" />
@@ -186,7 +193,6 @@ const DetailModal = ({ isOpen, onClose, item, type = 'project', onSecureView }) 
                                                     key={i}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        setImageLoading(true);
                                                         setCurrentImageIndex(i);
                                                     }}
                                                     className={`rounded-full transition-all duration-300 ${i === currentImageIndex

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Download, ExternalLink, Globe, Smartphone, ChevronLeft, ChevronRight, Github, ImageOff } from 'lucide-react';
+import { motion } from 'framer-motion';
 import ImageLightbox from '../../../components/ui/ImageLightbox';
 import SpotlightCard from '../../../components/ui/SpotlightCard';
 import DetailModal from '../../../components/ui/DetailModal';
@@ -88,21 +89,32 @@ const ProjectCard = ({ project, large = false }) => {
                     <div
                         className={`${large ? 'h-72 md:h-80' : 'h-52'} bg-gray-100 dark:bg-black/40 relative overflow-hidden`}
                     >
-                        {currentImage ? (
-                            <div className="w-full h-full relative">
-                                <img
-                                    src={currentImage}
-                                    alt={`${title}`}
-                                    className="w-full h-full object-cover img-reveal"
-                                    onError={(e) => {
-                                        if (e.target.src.includes('wsrv.nl')) {
-                                            e.target.src = uniqueImages[currentIndex];
-                                        } else {
-                                            e.target.onerror = null;
-                                            e.target.src = 'https://placehold.co/600x400?text=No+Image';
-                                        }
-                                    }}
-                                />
+                        {uniqueImages.length > 0 ? (
+                            <div className="w-full h-full relative overflow-hidden">
+                                <motion.div
+                                    className="flex h-full w-full"
+                                    animate={{ x: `-${currentIndex * 100}%` }}
+                                    transition={{ type: "spring", stiffness: 220, damping: 26 }}
+                                >
+                                    {uniqueImages.map((imgUrl, idx) => (
+                                        <div key={idx} className="w-full h-full flex-shrink-0 relative">
+                                            <img
+                                                src={getDirectImageUrl(imgUrl)}
+                                                alt={`${title} - ${idx + 1}`}
+                                                className="w-full h-full object-cover img-reveal"
+                                                loading="eager"
+                                                onError={(e) => {
+                                                    if (e.target.src && e.target.src.includes('wsrv.nl')) {
+                                                        e.target.src = imgUrl;
+                                                    } else {
+                                                        e.target.onerror = null;
+                                                        e.target.src = 'https://placehold.co/600x400?text=No+Image';
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+                                    ))}
+                                </motion.div>
 
                                 {/* Category Icon Badge */}
                                 <div className="absolute top-3 right-3 bg-white/90 dark:bg-black/40 backdrop-blur-md p-2 rounded-full text-[#202124] dark:text-white/90 border border-gray-200 dark:border-white/10 shadow-sm">
