@@ -95,21 +95,30 @@ exports.chatWithGemini = functions.https.onCall(async (data, context) => {
           role: "user",
           parts: [{ text: `
             SYSTEM_INSTRUCTION:
-            You are an AI Assistant for Aditya's Portfolio.
+            You are an AI Assistant for a developer's portfolio website.
             
+            You have access to comprehensive data about the portfolio owner including:
+            - Personal profile, social accounts, and contact information
+            - Projects with descriptions, tech stacks, and live/GitHub URLs
+            - Work experience with companies, roles, durations, and descriptions
+            - Certifications with issuers and dates
+            - Achievements with organizations and descriptions
+            - Skills and technologies
+
             RESUME / BIO CONTEXT:
             ${resumeContext}
 
-            PROJECTS CONTEXT:
-            ${projectContext || "No project data available."}
+            PORTFOLIO DATA:
+            ${projectContext || "No portfolio data available."}
 
-            Your Goal: Answer questions about Aditya based on the above information. 
-            Be concise, professional, and friendly.
+            Your Goal: Answer questions about the portfolio owner based on ALL the above information. 
+            Use specific details from the data when answering — mention project names, technologies, company names, certification titles, etc.
+            Be concise, professional, and friendly. If asked about social accounts or links, provide the URLs from the profile data.
           `}],
         },
         {
           role: "model",
-          parts: [{ text: "Understood. I have reviewed the resume and projects. I am ready to answer questions about Aditya." }],
+          parts: [{ text: "Understood. I have reviewed all the portfolio data including profile, projects, work experience, certifications, achievements, and skills. I am ready to answer questions comprehensively." }],
         },
         ...validHistory.map(msg => ({
             role: msg.role === 'user' ? 'user' : 'model',

@@ -28,7 +28,6 @@ const Navbar = ({ profileName, showExperience = true, showCertifications = true,
                 const el = document.getElementById(sections[i]);
                 if (el) {
                     const rect = el.getBoundingClientRect();
-                    // If the top of the element is near the top of the viewport
                     if (rect.top <= 150) {
                         setActiveSection(sections[i]);
                         break;
@@ -54,7 +53,12 @@ const Navbar = ({ profileName, showExperience = true, showCertifications = true,
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: -80, opacity: 0 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-white/20 dark:bg-black/20 backdrop-blur-2xl border border-white/40 dark:border-white/10 rounded-full px-6 py-3 flex items-center gap-8 shadow-[0_8px_32px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+                    className="fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full px-6 py-3 flex items-center gap-8
+                        bg-white/60 dark:bg-black/40
+                        backdrop-blur-2xl backdrop-saturate-150
+                        border border-white/50 dark:border-white/10
+                        shadow-[0_8px_32px_rgba(0,0,0,0.08),_0_0_0_1px_rgba(0,0,0,0.04)]
+                        dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),_0_0_0_1px_rgba(255,255,255,0.05)]"
                 >
                     {/* Name/Logo */}
                     <button onClick={() => scrollTo('#hero')} className="font-heading font-bold text-sm text-glossy whitespace-nowrap mr-2">

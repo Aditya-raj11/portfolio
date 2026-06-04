@@ -18,6 +18,7 @@ import AiConfigTab from './components/AiConfigTab';
 import ExperienceTab from './components/ExperienceTab';
 import CertificationsTab from './components/CertificationsTab';
 import AchievementsTab from './components/AchievementsTab';
+import SkillsTab from './components/SkillsTab';
 
 const AdminLayout = () => {
     const [loading, setLoading] = useState(false);
@@ -26,6 +27,7 @@ const AdminLayout = () => {
     const [experiences, setExperiences] = useState([]);
     const [certifications, setCertifications] = useState([]);
     const [achievements, setAchievements] = useState([]);
+    const [skills, setSkills] = useState([]);
     const [activeTab, setActiveTab] = useState('projects');
 
     // Dark Mode State
@@ -73,6 +75,7 @@ const AdminLayout = () => {
     const [imageUrls, setImageUrls] = useState([]);
     const [currentImageUrl, setCurrentImageUrl] = useState('');
     const [imageFile, setImageFile] = useState(null);
+    const [projectImageFiles, setProjectImageFiles] = useState([]);
     const [apkFile, setApkFile] = useState(null);
     const [resumeFile, setResumeFile] = useState(null);
 
@@ -93,6 +96,7 @@ const AdminLayout = () => {
         fetchExperiences();
         fetchCertifications();
         fetchAchievements();
+        fetchSkills();
         fetchAiSettings();
         fetchProfileSettings();
         fetchStats();
@@ -195,6 +199,34 @@ const AdminLayout = () => {
         } catch (error) { console.error("Error fetching profile settings:", error); }
     };
 
+    const fetchSkills = async () => {
+        try {
+            const q = query(collection(db, "skills"), orderBy("createdAt", "desc"));
+            const querySnapshot = await getDocs(q);
+            const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setSkills(data);
+        } catch (error) { console.error("Error fetching skills:", error); }
+    };
+
+    const addSkill = async (skillData) => {
+        setSavingSettings(true);
+        try {
+            await addDoc(collection(db, "skills"), {
+                ...skillData,
+                createdAt: new Date().toISOString()
+            });
+            await fetchSkills();
+        } catch (error) { console.error("Error adding skill:", error); }
+        finally { setSavingSettings(false); }
+    };
+
+    const deleteSkill = async (id) => {
+        try {
+            await deleteDoc(doc(db, "skills", id));
+            setSkills(prev => prev.filter(s => s.id !== id));
+        } catch (error) { console.error("Error deleting skill:", error); }
+    };
+
     const handleLogout = async () => {
         await signOut(auth);
         navigate('/login');
@@ -213,7 +245,7 @@ const AdminLayout = () => {
         try {
             const deleteIfFirebaseUrl = async (url) => {
                 if (url && url.includes('firebasestorage.googleapis.com')) {
-                    try { await deleteObject(ref(storage, url)); } catch (err) { console.warn('File not found in storage or already deleted:', url); }
+                    try { await deleteObject(ref(storage, url)); } catch { console.warn('File not found in storage or already deleted:', url); }
                 }
             };
             await deleteIfFirebaseUrl(project.imageUrl);
@@ -231,7 +263,7 @@ const AdminLayout = () => {
         if (!window.confirm(`Are you sure you want to delete "${item.title}"?`)) return;
         try {
             if (item.imageUrl && item.imageUrl.includes('firebasestorage.googleapis.com')) {
-                try { await deleteObject(ref(storage, item.imageUrl)); } catch (err) { console.warn('Image not found in storage:', item.imageUrl); }
+                try { await deleteObject(ref(storage, item.imageUrl)); } catch { console.warn('Image not found in storage:', item.imageUrl); }
             }
             await deleteDoc(doc(db, collectionName, item.id));
             if (collectionName === 'experiences') fetchExperiences();
@@ -320,11 +352,17 @@ const AdminLayout = () => {
                 });
             };
 
-            if (imageFile) {
-                try {
-                    const fileUrl = await uploadFile(imageFile, `images/${Date.now()}_${imageFile.name}`);
-                    finalImageUrls.unshift(fileUrl);
-                } catch (err) { console.error("Image upload failed:", err); alert("Image upload failed (but continuing)."); }
+            if (projectImageFiles && projectImageFiles.length > 0) {
+                for (let i = 0; i < projectImageFiles.length; i++) {
+                    const file = projectImageFiles[i];
+                    try {
+                        const fileUrl = await uploadFile(file, `images/${Date.now()}_${i}_${file.name}`);
+                        finalImageUrls.push(fileUrl);
+                    } catch (err) {
+                        console.error(`Image upload failed for ${file.name}:`, err);
+                        alert(`Failed to upload image: ${file.name}`);
+                    }
+                }
             }
 
             let downloadUrl = normalizeUrl(formData.downloadUrl || '');
@@ -342,7 +380,7 @@ const AdminLayout = () => {
 
             alert("Project added successfully!");
             setFormData({ title: '', description: '', category: 'app', projectUrl: '', githubUrl: '', techStack: '' });
-            setImageUrls([]); setCurrentImageUrl(''); setImageFile(null); setApkFile(null);
+            setImageUrls([]); setCurrentImageUrl(''); setImageFile(null); setProjectImageFiles([]); setApkFile(null);
             fetchProjects();
         } catch (error) { console.error("Error adding project: ", error); alert("Error adding project: " + error.message); } finally { setLoading(false); setUploadProgress(0); }
     };
@@ -449,6 +487,7 @@ const AdminLayout = () => {
                             {activeTab === 'experiences' && 'Experience Management'}
                             {activeTab === 'certifications' && 'Certifications Management'}
                             {activeTab === 'achievements' && 'Achievements Management'}
+                            {activeTab === 'skills' && 'Skills & Technologies'}
                             {activeTab === 'profile' && 'Profile Settings'}
                             {activeTab === 'messages' && 'Visitor Messages'}
                             {activeTab === 'ai' && 'AI Configuration'}
@@ -463,7 +502,7 @@ const AdminLayout = () => {
                     <ProjectsTab
                         formData={formData} setFormData={setFormData} handleSubmit={handleSubmit}
                         loading={loading} uploadProgress={uploadProgress}
-                        imageFile={imageFile} setImageFile={setImageFile}
+                        projectImageFiles={projectImageFiles} setProjectImageFiles={setProjectImageFiles}
                         currentImageUrl={currentImageUrl} setCurrentImageUrl={setCurrentImageUrl}
                         handleAddImageUrl={handleAddImageUrl} imageUrls={imageUrls} removeImageUrl={removeImageUrl}
                         apkFile={apkFile} setApkFile={setApkFile}
@@ -515,6 +554,9 @@ const AdminLayout = () => {
                 }
                 {activeTab === 'ai' &&
                     <AiConfigTab aiConfig={aiConfig} setAiConfig={setAiConfig} handleSaveAiSettings={handleSaveAiSettings} savingSettings={savingSettings} />
+                }
+                {activeTab === 'skills' &&
+                    <SkillsTab skills={skills} onAdd={addSkill} onDelete={deleteSkill} saving={savingSettings} />
                 }
             </main>
 

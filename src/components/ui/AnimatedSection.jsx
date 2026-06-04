@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const AnimatedSection = ({ children, delay = 0, className = "" }) => {
+const AnimatedSection = ({ children, delay = 0, className = "", onClick }) => {
     return (
         <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -9,6 +9,7 @@ const AnimatedSection = ({ children, delay = 0, className = "" }) => {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, delay: delay, ease: "easeOut" }}
             className={className}
+            onClick={onClick}
         >
             {children}
         </motion.div>

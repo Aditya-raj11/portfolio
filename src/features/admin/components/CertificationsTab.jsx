@@ -3,6 +3,7 @@ import { Upload, Plus, Loader2, Image as ImageIcon, X } from 'lucide-react';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import SortableGenericItem from './SortableGenericItem';
+import MonthYearPicker from '../../../components/ui/MonthYearPicker';
 
 const CertificationsTab = ({
     formData, setFormData,
@@ -47,17 +48,13 @@ const CertificationsTab = ({
                                         onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
                                     />
                                 </div>
-                                <div className="space-y-1.5">
-                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Date Issued</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        className="w-full bg-black/5 dark:bg-[#111] border border-black/10 dark:border-white/10 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-black focus:border-black dark:focus:ring-white dark:focus:border-white outline-none transition-all"
-                                        placeholder="e.g. March 2024"
-                                        value={formData.duration}
-                                        onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                                    />
-                                </div>
+                                <MonthYearPicker
+                                    label="Date Issued"
+                                    required
+                                    value={formData.duration}
+                                    onChange={(val) => setFormData({ ...formData, duration: val })}
+                                    placeholder="Select month"
+                                />
                             </div>
 
                             <div className="space-y-1.5">

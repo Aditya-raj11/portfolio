@@ -12,12 +12,48 @@
 
 html {
   scroll-behavior: smooth;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 
-html::-webkit-scrollbar {
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Custom scrollbar utility */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 10px;
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Base Styles */
@@ -77,6 +113,25 @@ html.lenis body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Section Header Glow */
+.section-heading-glow {
+  position: relative;
+  display: inline-block;
+}
+.section-heading-glow::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 40%;
+  height: 2px;
+  background: linear-gradient(90deg, #000 0%, transparent 100%);
+  border-radius: 2px;
+}
+.dark .section-heading-glow::after {
+  background: linear-gradient(90deg, #fff 0%, transparent 100%);
 }
 
 /* ─── Panels ─── */
@@ -141,12 +196,26 @@ html.lenis body {
   animation: shimmer 0.6s ease forwards;
 }
 
+/* ─── Float animation ─── */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
 /* ─── Section number badge ─── */
 .section-number {
   font-family: var(--font-heading);
   font-size: 0.7rem;
   letter-spacing: 0.15em;
-  @apply text-black/30 dark:text-white/25 uppercase;
+  text-transform: uppercase;
+  color: rgba(0,0,0,0.3);
+}
+.dark .section-number {
+  color: rgba(255,255,255,0.25);
 }
 
 /* ─── Availability badge ─── */
@@ -163,4 +232,94 @@ html.lenis body {
   body, a, button, [role="button"], input, textarea, select {
     cursor: none !important;
   }
-}
+}
+
+/* ─── Image reveal on hover ─── */
+.img-reveal {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.group:hover .img-reveal {
+  transform: scale(1.08);
+}
+
+/* ─── Stat counter glow ─── */
+.stat-value {
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  line-height: 1;
+  color: #000;
+}
+.dark .stat-value {
+  color: #fff;
+}
+@media (min-width: 768px) {
+  .stat-value {
+    font-size: 3rem;
+  }
+}
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 0.25rem;
+  color: rgba(0,0,0,0.4);
+}
+.dark .stat-label {
+  color: rgba(255,255,255,0.3);
+}
+.stat-divider {
+  width: 1px;
+  height: 2.5rem;
+  background: rgba(0,0,0,0.1);
+}
+.dark .stat-divider {
+  background: rgba(255,255,255,0.1);
+}
+
+/* ─── Bento grid ─── */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.bento-grid > :first-child {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+@media (max-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .bento-grid > :first-child {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+}
+@media (max-width: 640px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+  .bento-grid > :first-child {
+    grid-column: span 1;
+  }
+}
+
+/* ─── Horizontal timeline ─── */
+.timeline-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.timeline-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Skeleton pulse ─── */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.2; }
+}
+.skeleton-pulse {
+  animation: skeleton-pulse 1.8s ease-in-out infinite;
+}

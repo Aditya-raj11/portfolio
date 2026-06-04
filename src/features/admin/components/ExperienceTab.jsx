@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Upload, Plus, Loader2, Image as ImageIcon, X } from 'lucide-react';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import SortableGenericItem from './SortableGenericItem';
+import MonthYearPicker from '../../../components/ui/MonthYearPicker';
 
 const ExperienceTab = ({
     formData, setFormData,
@@ -13,6 +14,24 @@ const ExperienceTab = ({
     handleDelete,
     setCurrentLightboxImages, setCurrentLightboxIndex, setLightboxOpen
 }) => {
+    // Parse duration into start/end parts
+    const { startDate, endDate } = useMemo(() => {
+        const dur = formData.duration || '';
+        const parts = dur.split(' - ');
+        return {
+            startDate: parts[0]?.trim() || '',
+            endDate: parts[1]?.trim() || ''
+        };
+    }, [formData.duration]);
+
+    const updateDuration = (start, end) => {
+        let duration = '';
+        if (start && end) duration = `${start} - ${end}`;
+        else if (start) duration = start;
+        else if (end) duration = end;
+        setFormData({ ...formData, duration });
+    };
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Add Item Form */}
@@ -35,29 +54,33 @@ const ExperienceTab = ({
                                 />
                             </div>
 
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</label>
+                                <input
+                                    type="text"
+                                    required
+                                    className="w-full bg-black/5 dark:bg-[#111] border border-black/10 dark:border-white/10 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-black focus:border-black dark:focus:ring-white dark:focus:border-white outline-none transition-all"
+                                    placeholder="e.g. Google"
+                                    value={formData.organization}
+                                    onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+                                />
+                            </div>
+
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1.5">
-                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        className="w-full bg-black/5 dark:bg-[#111] border border-black/10 dark:border-white/10 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-black focus:border-black dark:focus:ring-white dark:focus:border-white outline-none transition-all"
-                                        placeholder="e.g. Google"
-                                        value={formData.organization}
-                                        onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
-                                    />
-                                </div>
-                                <div className="space-y-1.5">
-                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Duration</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        className="w-full bg-black/5 dark:bg-[#111] border border-black/10 dark:border-white/10 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-black focus:border-black dark:focus:ring-white dark:focus:border-white outline-none transition-all"
-                                        placeholder="e.g. Jan 2022 - Present"
-                                        value={formData.duration}
-                                        onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                                    />
-                                </div>
+                                <MonthYearPicker
+                                    label="Start Date"
+                                    required
+                                    value={startDate}
+                                    onChange={(val) => updateDuration(val, endDate)}
+                                    placeholder="Start month"
+                                />
+                                <MonthYearPicker
+                                    label="End Date"
+                                    value={endDate}
+                                    onChange={(val) => updateDuration(startDate, val)}
+                                    placeholder="End month"
+                                    showPresent
+                                />
                             </div>
 
                             <div className="space-y-1.5">

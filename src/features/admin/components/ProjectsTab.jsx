@@ -7,7 +7,7 @@ import SortableProjectItem from './SortableProjectItem';
 const ProjectsTab = ({
     formData, setFormData,
     handleSubmit, loading, uploadProgress,
-    imageFile, setImageFile,
+    projectImageFiles, setProjectImageFiles,
     currentImageUrl, setCurrentImageUrl, handleAddImageUrl,
     imageUrls, removeImageUrl,
     apkFile, setApkFile,
@@ -99,13 +99,19 @@ const ProjectsTab = ({
                                     <div className="relative w-full">
                                         <input
                                             type="file"
+                                            multiple
                                             accept="image/*"
                                             id="file-upload"
                                             className="hidden"
-                                            onChange={(e) => setImageFile(e.target.files[0])}
+                                            onChange={(e) => {
+                                                if (e.target.files) {
+                                                    const filesArray = Array.from(e.target.files);
+                                                    setProjectImageFiles(prev => [...prev, ...filesArray]);
+                                                }
+                                            }}
                                         />
                                         <label htmlFor="file-upload" className="w-full flex items-center justify-center gap-2 bg-gray-50 dark:bg-[#111] border border-dashed border-gray-300 dark:border-[#444] rounded-lg py-3 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#222] cursor-pointer transition-colors">
-                                            <Upload size={14} /> {imageFile ? 'Change File' : 'Upload Image File'}
+                                            <Upload size={14} /> Upload Image Files
                                         </label>
                                     </div>
                                     <div className="flex gap-2 w-full">
@@ -123,14 +129,14 @@ const ProjectsTab = ({
 
                                 {/* Preview List */}
                                 <div className="space-y-2">
-                                    {imageFile && (
-                                        <div className="flex items-center justify-between bg-black/5 dark:bg-white/5 p-2 rounded-lg border border-black/10 dark:border-white/10 text-sm">
-                                            <span className="truncate text-black dark:text-white font-medium">{imageFile.name}</span>
-                                            <button type="button" onClick={() => setImageFile(null)} className="text-gray-400 hover:text-black dark:hover:text-white"><X size={14} /></button>
+                                    {projectImageFiles && projectImageFiles.map((file, idx) => (
+                                        <div key={`file-${idx}`} className="flex items-center justify-between bg-black/5 dark:bg-white/5 p-2 rounded-lg border border-black/10 dark:border-white/10 text-sm">
+                                            <span className="truncate text-black dark:text-white font-medium">{file.name}</span>
+                                            <button type="button" onClick={() => setProjectImageFiles(prev => prev.filter((_, i) => i !== idx))} className="text-gray-400 hover:text-black dark:hover:text-white"><X size={14} /></button>
                                         </div>
-                                    )}
+                                    ))}
                                     {imageUrls.map((url, idx) => (
-                                        <div key={idx} className="flex items-center justify-between bg-gray-50 dark:bg-[#222]/50 p-2 rounded-lg border border-gray-200 dark:border-[#444] text-sm">
+                                        <div key={`url-${idx}`} className="flex items-center justify-between bg-gray-50 dark:bg-[#222]/50 p-2 rounded-lg border border-gray-200 dark:border-[#444] text-sm">
                                             <span className="truncate text-gray-600 dark:text-gray-300 max-w-[200px]">{url}</span>
                                             <button type="button" onClick={() => removeImageUrl(idx)} className="text-gray-400 hover:text-black dark:hover:text-white"><X size={14} /></button>
                                         </div>

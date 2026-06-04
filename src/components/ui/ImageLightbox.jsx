@@ -9,29 +9,31 @@ const ImageLightbox = ({ isOpen, onClose, images, initialIndex = 0 }) => {
 
     useEffect(() => {
         if (isOpen) {
-            setCurrentIndex(initialIndex);
-            setIsLoading(true);
+            setTimeout(() => {
+                setCurrentIndex(initialIndex);
+                setIsLoading(true);
+            }, 0);
             document.body.style.overflow = 'hidden'; // Prevent scrolling
         } else {
             // document.body.style.overflow = 'unset'; // Handled by cleanup
-            setIsLoading(true);
+            setTimeout(() => setIsLoading(true), 0);
         }
         return () => {
             document.body.style.overflow = 'unset';
         };
     }, [isOpen, initialIndex]);
 
-    const handleNext = (e) => {
+    const handleNext = useCallback((e) => {
         e?.stopPropagation();
         setIsLoading(true);
         setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-    };
+    }, [images.length]);
 
-    const handlePrev = (e) => {
+    const handlePrev = useCallback((e) => {
         e?.stopPropagation();
         setIsLoading(true);
         setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-    };
+    }, [images.length]);
 
     const handleKeyDown = useCallback((e) => {
         if (!isOpen) return;

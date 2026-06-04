@@ -31,6 +31,12 @@ service cloud.firestore {
       allow write: if isAuthenticated();
     }
 
+    // Skills: Public Read, Admin Write
+    match /skills/{skillId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
     // Settings Profile (Socials, Resume): Public Read, Admin Write
     match /settings/profile {
       allow read: if true;

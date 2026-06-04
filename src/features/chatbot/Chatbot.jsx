@@ -37,25 +37,68 @@ const Chatbot = forwardRef((props, ref) => {
         scrollToBottom();
     }, [messages, isOpen]); // Scroll on open too
 
-    // Fetch projects to send as context
+    // Fetch all portfolio data to send as context
     useEffect(() => {
         const fetchContext = async () => {
             try {
-                const projectsSnap = await getDocs(collection(db, "projects"));
-                const projects = projectsSnap.docs.map(doc => doc.data());
+                // Fetch all collections in parallel
+                const [projectsSnap, experiencesSnap, certsSnap, achievementsSnap, skillsSnap, profileSnap] = await Promise.all([
+                    getDocs(collection(db, "projects")),
+                    getDocs(collection(db, "experiences")),
+                    getDocs(collection(db, "certifications")),
+                    getDocs(collection(db, "achievements")),
+                    getDocs(collection(db, "skills")),
+                    getDoc(doc(db, "settings", "profile"))
+                ]);
+
+                const projects = projectsSnap.docs.map(d => d.data());
+                const experiences = experiencesSnap.docs.map(d => d.data());
+                const certifications = certsSnap.docs.map(d => d.data());
+                const achievements = achievementsSnap.docs.map(d => d.data());
+                const skills = skillsSnap.docs.map(d => d.data());
+                const profile = profileSnap.exists() ? profileSnap.data() : {};
 
                 const context = `
-                    --- PROJECTS DATA ---
-                    ${projects.map(p => `
-                    - Title: ${p.title}
-                    - Description: ${p.description}
-                    - Category: ${p.category}
-                    - Tech Stack: ${p.techStack || 'Not specified'}
-                    `).join('\n')}
+--- PROFILE & ACCOUNTS ---
+Name: ${profile.name || 'Not set'}
+Tagline: ${profile.tagline || 'Not set'}
+Email: ${profile.email || 'Not set'}
+GitHub: ${profile.githubUrl || 'Not set'}
+LinkedIn: ${profile.linkedinUrl || 'Not set'}
+
+--- PROJECTS (${projects.length}) ---
+${projects.map(p => `
+• ${p.title} [${p.category || 'general'}]
+  Description: ${p.description || 'N/A'}
+  Tech Stack: ${p.techStack || 'Not specified'}
+  ${p.projectUrl ? `Live URL: ${p.projectUrl}` : ''}
+  ${p.githubUrl ? `GitHub: ${p.githubUrl}` : ''}
+`).join('')}
+
+--- WORK EXPERIENCE (${experiences.length}) ---
+${experiences.map(e => `
+• ${e.title} at ${e.organization || 'N/A'} (${e.duration || 'N/A'})
+  ${e.description || 'No description'}
+`).join('')}
+
+--- CERTIFICATIONS (${certifications.length}) ---
+${certifications.map(c => `
+• ${c.title} — issued by ${c.organization || 'N/A'} (${c.duration || 'N/A'})
+  ${c.description || ''}
+`).join('')}
+
+--- ACHIEVEMENTS (${achievements.length}) ---
+${achievements.map(a => `
+• ${a.title} — ${a.organization || 'N/A'} (${a.duration || 'N/A'})
+  ${a.description || ''}
+`).join('')}
+
+--- SKILLS & TECHNOLOGIES (${skills.length}) ---
+${skills.map(s => `• ${s.name}${s.category ? ` [${s.category}]` : ''}`).join('\n')}
                 `;
                 setProjectContext(context);
             } catch (error) {
-                console.error("Error fetching projects for AI:", error);
+                console.error("Error fetching portfolio context for AI:", error);
             }
         };
 
@@ -77,7 +120,7 @@ const Chatbot = forwardRef((props, ref) => {
         };
         fetchProfile();
 
-    }, [isOpen]);
+    }, [isOpen, projectContext]);
 
     const handleSend = async (manualText = null) => {
         const textToSend = typeof manualText === 'string' ? manualText : input;
@@ -193,6 +236,7 @@ const Chatbot = forwardRef((props, ref) => {
                                     <div className="prose dark:prose-invert prose-sm max-w-none">
                                         <ReactMarkdown
                                             remarkPlugins={[remarkGfm]}
+                                            /* eslint-disable no-unused-vars */
                                             components={{
                                                 // Custom renderers to strip margins and ensure styling fits the bubble
                                                 p: ({ node, ...props }) => <p className="mb-1 last:mb-0" {...props} />,
@@ -207,6 +251,7 @@ const Chatbot = forwardRef((props, ref) => {
                                                         <pre className="bg-black/10 dark:bg-white/10 rounded p-2 overflow-x-auto text-xs font-mono my-2"><code {...props}>{children}</code></pre>
                                                 }
                                             }}
+                                            /* eslint-enable no-unused-vars */
                                         >
                                             {msg.text}
                                         </ReactMarkdown>

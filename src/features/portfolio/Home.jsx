@@ -18,12 +18,17 @@ import ScrollProgressBar from '../../components/ui/ScrollProgressBar';
 import Navbar from '../../components/ui/Navbar';
 import BackToTop from '../../components/ui/BackToTop';
 import SecureViewerModal from '../../components/ui/SecureViewerModal';
+import CountUp from '../../components/ui/CountUp';
+import SpotlightCard from '../../components/ui/SpotlightCard';
+import SectionDots from '../../components/ui/SectionDots';
+import DetailModal from '../../components/ui/DetailModal';
 
 const Home = ({ onReady }) => {
     const [projects, setProjects] = useState([]);
     const [experiences, setExperiences] = useState([]);
     const [certifications, setCertifications] = useState([]);
     const [achievements, setAchievements] = useState([]);
+    const [skills, setSkills] = useState([]);
     const [featuredProject, setFeaturedProject] = useState(null);
 
     const [loading, setLoading] = useState(true);
@@ -40,6 +45,7 @@ const Home = ({ onReady }) => {
     const [isResumeOpen, setIsResumeOpen] = useState(false);
     const [isFeaturedLightboxOpen, setIsFeaturedLightboxOpen] = useState(false);
     const [secureViewerUrl, setSecureViewerUrl] = useState(null);
+    const [detailModal, setDetailModal] = useState({ isOpen: false, item: null, type: '' });
 
     // Contact Form State
     const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
@@ -136,6 +142,12 @@ const Home = ({ onReady }) => {
                 achData.sort((a, b) => (a.order !== undefined ? a.order : 9999) - (b.order !== undefined ? b.order : 9999));
                 setAchievements(achData);
 
+                // Fetch Skills
+                const skillsQ = query(collection(db, "skills"), orderBy("createdAt", "desc"));
+                const skillsSnap = await getDocs(skillsQ);
+                const skillsData = skillsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setSkills(skillsData);
+
                 // 2. Fetch Profile
                 const profileDoc = await getDoc(doc(db, "settings", "profile"));
                 if (profileDoc.exists()) {
@@ -222,7 +234,7 @@ const Home = ({ onReady }) => {
                 <AnimatedSection delay={0.1} className="max-w-4xl mt-12 relative z-10">
                     {/* Avatar + name row */}
                     <div className="flex items-center gap-4 mb-10">
-                        <div className="relative">
+                        <div className="relative animate-float">
                             {profile.avatarUrl ? (
                                 <img
                                     src={profile.avatarUrl}
@@ -250,18 +262,36 @@ const Home = ({ onReady }) => {
                         <span className="text-black dark:text-white">.</span>
                     </h1>
 
-                    <h2 className="text-xl md:text-2xl text-black/70 dark:text-gray-300 font-medium mb-6 max-w-2xl leading-relaxed">
+                    <h2 className="text-xl md:text-2xl text-black/70 dark:text-gray-300 font-medium mb-6 max-w-2xl leading-loose">
                         {profile.tagline || "A Tech Explorer & Full Stack Developer making useful things for the web and mobile."}
                     </h2>
 
-                    {/* Tech stack pills */}
-                    <div className="flex flex-wrap gap-2 mb-10">
-                        {['React', 'Firebase', 'Flutter', 'Node.js', 'TypeScript'].map(tech => (
-                            <span key={tech} className="px-3 py-1 rounded-full text-xs font-semibold border border-black/10 dark:border-white/10 bg-black/[0.03] dark:bg-white/[0.04] text-black/70 dark:text-white/60 tracking-wide">
-                                {tech}
-                            </span>
-                        ))}
-                    </div>
+                    {/* Tech stack pills — dynamic from admin */}
+                    {skills.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-8">
+                            {skills.map(skill => (
+                                <span
+                                    key={skill.id}
+                                    className="px-3 py-1 rounded-full text-xs font-semibold border tracking-wide transition-colors"
+                                    style={{
+                                        borderColor: `${skill.color}66`,
+                                        color: skill.color,
+                                        backgroundColor: `${skill.color}1A`,
+                                    }}
+                                >
+                                    {skill.name}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Project counter — auto-detected */}
+                    {projects.length > 0 && (
+                        <div className="flex items-center gap-3 mb-10">
+                            <div className="stat-value"><CountUp end={projects.length} suffix="+" /></div>
+                            <div className="stat-label">Projects Built</div>
+                        </div>
+                    )}
 
                     {/* CTA buttons */}
                     <div className="flex flex-wrap gap-3">
@@ -274,16 +304,16 @@ const Home = ({ onReady }) => {
                             </button>
                         )}
                         {profile.githubUrl && (
-                            <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 btn-3d rounded-full flex items-center gap-2 z-20 text-sm">
+                            <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 btn-3d rounded-full flex items-center gap-2 z-20 text-sm hover:scale-105 hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]">
                                 <Github size={16} /> GitHub
                             </a>
                         )}
                         {profile.linkedinUrl && (
-                            <a href={profile.linkedinUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 btn-3d rounded-full flex items-center gap-2 z-20 text-sm">
+                            <a href={profile.linkedinUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 btn-3d rounded-full flex items-center gap-2 z-20 text-sm hover:scale-105 hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]">
                                 <Linkedin size={16} /> LinkedIn
                             </a>
                         )}
-                        <a href={`mailto:${profile.email}`} className="px-6 py-3 btn-3d rounded-full flex items-center gap-2 z-20 text-sm">
+                        <a href={`mailto:${profile.email}`} className="px-6 py-3 btn-3d rounded-full flex items-center gap-2 z-20 text-sm hover:scale-105 hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]">
                             <Mail size={16} /> Email
                         </a>
                         <ShareButton title={`${profile.name} - Portfolio`} text={profile.tagline} />
@@ -334,7 +364,7 @@ const Home = ({ onReady }) => {
                 <AnimatedSection delay={0.2} className="mb-12">
                     <p className="section-number mb-1">01 — Work</p>
                     <div className="flex items-end gap-6">
-                        <h2 className="text-3xl font-heading text-glossy">Selected Projects</h2>
+                        <h2 className="text-3xl font-heading text-glossy section-heading-glow">Selected Projects</h2>
                         <div className="hidden md:block h-px flex-1 bg-gradient-to-r from-black/20 to-transparent dark:from-white/20 mb-2" />
                     </div>
                 </AnimatedSection>
@@ -388,30 +418,30 @@ const Home = ({ onReady }) => {
                 )}
 
                 {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="bento-grid">
                         {[1, 2, 3, 4, 5, 6].map((i) => (
-                            <SkeletonCard key={i} />
+                            <SkeletonCard key={i} large={i === 1} />
                         ))}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="bento-grid">
                         {projects.length > 0 ? (
                             projects.map((project, idx) => (
-                                <AnimatedSection key={project.id} delay={idx * 0.1}>
+                                <AnimatedSection key={project.id} delay={idx * 0.08}>
                                     <Tilt
-                                        tiltMaxAngleX={5}
-                                        tiltMaxAngleY={5}
-                                        scale={1.02}
+                                        tiltMaxAngleX={4}
+                                        tiltMaxAngleY={4}
+                                        scale={1.01}
                                         transitionSpeed={2000}
                                         className="h-full"
                                     >
-                                        <ProjectCard project={project} />
+                                        <ProjectCard project={project} large={idx === 0} />
                                     </Tilt>
                                 </AnimatedSection>
                             ))
                         ) : (
                             <div className="col-span-full py-24 text-center glass-panel rounded-3xl flex flex-col items-center justify-center border-dashed border-2 dark:border-white/10 border-black/10">
-                                <div className="bg-gray-100 dark:bg-white/5 p-4 rounded-full mb-4">
+                                <div className="bg-gray-100 dark:bg-white/5 p-4 rounded-full mb-4 animate-float">
                                     <FolderOpen size={32} className="text-slate-400 dark:text-white" />
                                 </div>
                                 <h3 className="text-xl font-bold text-black dark:text-white mb-2">No Projects Found</h3>
@@ -435,65 +465,80 @@ const Home = ({ onReady }) => {
                                 <AnimatedSection delay={0.2} className="mb-8">
                                     <p className="section-number mb-1">02 — Background</p>
                                     <div className="flex items-end gap-4">
-                                        <h2 className="text-3xl font-heading text-glossy">Experience</h2>
+                                        <h2 className="text-3xl font-heading text-glossy section-heading-glow">Experience</h2>
                                         <div className="hidden md:block h-px flex-1 bg-gradient-to-r from-black/20 to-transparent dark:from-white/20 mb-2" />
                                     </div>
                                 </AnimatedSection>
                                 
-                                <div className="space-y-6">
-                                    {experiences.map((exp, idx) => (
-                                        <AnimatedSection key={exp.id} delay={0.2 + (idx * 0.1)} className="glass-panel p-6 rounded-3xl relative group transition-all hover:shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_8px_32px_rgba(255,255,255,0.05)] border border-transparent hover:border-black/5 dark:hover:border-white/5">
-                                            <div className="flex gap-4 sm:gap-6">
-                                                {/* Logo/Image */}
-                                                <div className="w-12 h-12 sm:w-16 sm:h-16 shrink-0 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] border border-black/10 dark:border-white/10 overflow-hidden flex items-center justify-center relative shadow-inner">
-                                                    {exp.imageUrl ? (
-                                                        exp.fileType === 'pdf' ? (
-                                                            <div className="w-full h-full overflow-hidden relative bg-white flex items-center justify-center">
-                                                                <iframe 
-                                                                    src={`${exp.imageUrl}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
-                                                                    title="PDF Preview"
-                                                                    className="w-[200%] h-[200%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                                                                    scrolling="no"
-                                                                />
-                                                                <div className="absolute inset-0 bg-black/5 dark:bg-white/5 pointer-events-none" />
-                                                            </div>
-                                                        ) : (
-                                                            <img src={exp.imageUrl} alt={exp.organization} className="w-full h-full object-cover" />
-                                                        )
-                                                    ) : (
-                                                        <Briefcase className="text-gray-400" size={24} />
-                                                    )}
-                                                </div>
-                                                
-                                                {/* Content */}
-                                                <div className="flex-1">
-                                                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-2">
-                                                        <div>
-                                                            <h3 className="text-lg font-bold text-black dark:text-white flex items-center gap-2">
-                                                                {exp.title}
-                                                            </h3>
-                                                            <div className="text-black/70 dark:text-gray-300 font-medium flex items-center gap-2">
-                                                                {exp.organization}
-                                                                {(exp.linkUrl || exp.fileType === 'pdf') && (
-                                                                    <a href={exp.linkUrl || exp.imageUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors p-1 bg-indigo-50 dark:bg-indigo-900/30 rounded-md">
-                                                                        <ExternalLink size={14} />
-                                                                    </a>
-                                                                )}
-                                                            </div>
+                                {/* Horizontal scrollable timeline */}
+                                <div className="relative">
+                                    {/* Timeline rail */}
+                                    <div className="absolute top-6 left-0 right-0 h-px bg-black/10 dark:bg-white/10 z-0" />
+
+                                    <div className="flex gap-6 overflow-x-auto pb-4 timeline-scroll snap-x snap-mandatory">
+                                        {experiences.map((exp, idx) => (
+                                            <AnimatedSection key={exp.id} delay={0.2 + (idx * 0.08)} className="snap-start">
+                                                <SpotlightCard
+                                                    className="glass-panel backdrop-blur-2xl shadow-inner p-6 rounded-3xl relative group transition-all hover:shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_8px_32px_rgba(255,255,255,0.05)] border border-transparent hover:border-black/5 dark:hover:border-white/5 min-w-[320px] max-w-[380px] cursor-pointer"
+                                                    spotlightColor="rgba(99,102,241,0.08)"
+                                                    onClick={() => setDetailModal({ isOpen: true, item: exp, type: 'experience' })}
+                                                >
+                                                    {/* Timeline dot */}
+                                                    <div className="absolute -top-[3px] left-8 w-3 h-3 rounded-full bg-black dark:bg-white border-2 border-white dark:border-black z-10" />
+
+                                                    <div className="flex gap-4 sm:gap-6 mt-4">
+                                                        {/* Logo/Image */}
+                                                        <div className="w-12 h-12 sm:w-16 sm:h-16 shrink-0 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] border border-black/10 dark:border-white/10 overflow-hidden flex items-center justify-center relative shadow-inner">
+                                                            {exp.imageUrl ? (
+                                                                exp.fileType === 'pdf' ? (
+                                                                    <div className="w-full h-full overflow-hidden relative bg-white flex items-center justify-center">
+                                                                        <iframe 
+                                                                            src={`${exp.imageUrl}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
+                                                                            title="PDF Preview"
+                                                                            className="w-[200%] h-[200%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                                                                            scrolling="no"
+                                                                        />
+                                                                        <div className="absolute inset-0 bg-black/5 dark:bg-white/5 pointer-events-none" />
+                                                                    </div>
+                                                                ) : (
+                                                                    <img src={exp.imageUrl} alt={exp.organization} className="w-full h-full object-cover" />
+                                                                )
+                                                            ) : (
+                                                                <Briefcase className="text-gray-400" size={24} />
+                                                            )}
                                                         </div>
-                                                        <span className="text-xs font-bold px-3 py-1.5 bg-black/5 dark:bg-white/10 rounded-full text-black/70 dark:text-gray-300 whitespace-nowrap h-fit shadow-sm border border-black/5 dark:border-white/5">
-                                                            {exp.duration}
-                                                        </span>
+                                                        
+                                                        {/* Content */}
+                                                        <div className="flex-1">
+                                                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-2">
+                                                                <div>
+                                                                    <h3 className="text-lg font-bold text-black dark:text-white flex items-center gap-2">
+                                                                        {exp.title}
+                                                                    </h3>
+                                                                    <div className="text-black/70 dark:text-gray-300 font-medium flex items-center gap-2">
+                                                                        {exp.organization}
+                                                                        {(exp.linkUrl || exp.fileType === 'pdf') && (
+                                                                            <a href={exp.linkUrl || exp.imageUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors p-1 bg-indigo-50 dark:bg-indigo-900/30 rounded-md">
+                                                                                <ExternalLink size={14} />
+                                                                            </a>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                                <span className="text-xs font-bold px-3 py-1.5 bg-black/5 dark:bg-white/10 rounded-full text-black/70 dark:text-gray-300 whitespace-nowrap h-fit shadow-sm border border-black/5 dark:border-white/5">
+                                                                    {exp.duration}
+                                                                </span>
+                                                            </div>
+                                                            {exp.description && (
+                                                                <p className="text-black/80 dark:text-gray-400 text-sm leading-relaxed mt-3 whitespace-pre-wrap line-clamp-3">
+                                                                    {exp.description}
+                                                                </p>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                    {exp.description && (
-                                                        <p className="text-black/80 dark:text-gray-400 text-sm leading-relaxed mt-3 whitespace-pre-wrap">
-                                                            {exp.description}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </AnimatedSection>
-                                    ))}
+                                                </SpotlightCard>
+                                            </AnimatedSection>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -504,14 +549,14 @@ const Home = ({ onReady }) => {
                                 <AnimatedSection delay={0.3} className="mb-8">
                                     <p className="section-number mb-1">03 — Credentials</p>
                                     <div className="flex items-end gap-4">
-                                        <h2 className="text-3xl font-heading text-glossy">Certifications</h2>
+                                        <h2 className="text-3xl font-heading text-glossy section-heading-glow">Certifications</h2>
                                         <div className="hidden md:block h-px flex-1 bg-gradient-to-r from-black/20 to-transparent dark:from-white/20 mb-2" />
                                     </div>
                                 </AnimatedSection>
                                 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
                                     {certifications.map((cert, idx) => (
-                                        <AnimatedSection key={cert.id} delay={0.3 + (idx * 0.1)} className="glass-panel p-6 rounded-3xl flex flex-col h-full group hover:-translate-y-1 transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_8px_32px_rgba(255,255,255,0.05)] border border-transparent hover:border-black/5 dark:hover:border-white/5">
+                                        <AnimatedSection key={cert.id} delay={0.3 + (idx * 0.1)} className="glass-panel backdrop-blur-2xl shadow-inner p-6 rounded-3xl flex flex-col h-full group hover:-translate-y-1 transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_8px_32px_rgba(255,255,255,0.05)] border border-transparent hover:border-black/5 dark:hover:border-white/5 cursor-pointer" onClick={() => setDetailModal({ isOpen: true, item: cert, type: 'certification' })}>
                                             <div className="flex items-start justify-between mb-5">
                                                 <div className="w-14 h-14 rounded-full bg-gray-100 dark:bg-[#1a1a1a] border border-black/10 dark:border-white/10 overflow-hidden flex items-center justify-center p-1 shadow-inner">
                                                     {cert.imageUrl ? (
@@ -569,14 +614,14 @@ const Home = ({ onReady }) => {
                                 <AnimatedSection delay={0.3} className="mb-8">
                                     <p className="section-number mb-1">04 — Highlights</p>
                                     <div className="flex items-end gap-4">
-                                        <h2 className="text-3xl font-heading text-glossy">Achievements</h2>
+                                        <h2 className="text-3xl font-heading text-glossy section-heading-glow">Achievements</h2>
                                         <div className="hidden md:block h-px flex-1 bg-gradient-to-r from-black/20 to-transparent dark:from-white/20 mb-2" />
                                     </div>
                                 </AnimatedSection>
                                 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
                                     {achievements.map((ach, idx) => (
-                                        <AnimatedSection key={ach.id} delay={0.3 + (idx * 0.1)} className="glass-panel p-6 rounded-3xl flex flex-col h-full group hover:-translate-y-1 transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_8px_32px_rgba(255,255,255,0.05)] border border-transparent hover:border-black/5 dark:hover:border-white/5">
+                                        <AnimatedSection key={ach.id} delay={0.3 + (idx * 0.1)} className="glass-panel backdrop-blur-2xl shadow-inner p-6 rounded-3xl flex flex-col h-full group hover:-translate-y-1 transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_8px_32px_rgba(255,255,255,0.05)] border border-transparent hover:border-black/5 dark:hover:border-white/5 cursor-pointer" onClick={() => setDetailModal({ isOpen: true, item: ach, type: 'achievement' })}>
                                             <div className="flex items-start justify-between mb-5">
                                                 <div className="w-14 h-14 rounded-full bg-gray-100 dark:bg-[#1a1a1a] border border-black/10 dark:border-white/10 overflow-hidden flex items-center justify-center p-1 shadow-inner">
                                                     {ach.imageUrl ? (
@@ -729,11 +774,20 @@ const Home = ({ onReady }) => {
             )}
 
             <BackToTop />
+            <SectionDots />
 
             <SecureViewerModal 
                 isOpen={!!secureViewerUrl} 
                 fileUrl={secureViewerUrl} 
                 onClose={() => setSecureViewerUrl(null)} 
+            />
+
+            <DetailModal
+                isOpen={detailModal.isOpen}
+                onClose={() => setDetailModal({ isOpen: false, item: null, type: '' })}
+                item={detailModal.item}
+                type={detailModal.type}
+                onSecureView={(url) => setSecureViewerUrl(url)}
             />
         </div >
     );

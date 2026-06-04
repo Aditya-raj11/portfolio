@@ -29,7 +29,7 @@ const LoadingScreen = ({ dataReady, onComplete }) => {
     useEffect(() => {
         dataReadyRef.current = dataReady;
         if (dataReady && progressDoneRef.current && !exitingRef.current) {
-            setReadyToScroll(true);
+            setTimeout(() => setReadyToScroll(true), 0);
         }
     }, [dataReady]);
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, PieChart, Briefcase, MessageCircle, User, Settings, Sun, Moon, LogOut, Star } from 'lucide-react';
+import { LayoutDashboard, PieChart, Briefcase, MessageCircle, User, Settings, Sun, Moon, LogOut, Star, Palette } from 'lucide-react';
 
 const AdminSidebar = ({ activeTab, setActiveTab, messages, darkMode, setDarkMode, handleLogout }) => {
     return (
@@ -11,7 +11,7 @@ const AdminSidebar = ({ activeTab, setActiveTab, messages, darkMode, setDarkMode
                 </div>
             </div>
 
-            <nav className="flex-1 p-4 space-y-1">
+            <nav className="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-thin">
                 <button
                     onClick={() => setActiveTab('dashboard')}
                     className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === 'dashboard' ? 'bg-black/5 dark:bg-white/10 text-black dark:text-white' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#222]'}`}
@@ -51,6 +51,13 @@ const AdminSidebar = ({ activeTab, setActiveTab, messages, darkMode, setDarkMode
                 >
                     <Briefcase size={18} />
                     Experience
+                </button>
+                <button
+                    onClick={() => setActiveTab('skills')}
+                    className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === 'skills' ? 'bg-black/5 dark:bg-white/10 text-black dark:text-white' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#222]'}`}
+                >
+                    <Palette size={18} />
+                    Skills
                 </button>
                 <button
                     onClick={() => setActiveTab('certifications')}
