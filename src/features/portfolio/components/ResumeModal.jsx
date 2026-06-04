@@ -2,19 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { X, Download, ExternalLink, Printer, FileText } from 'lucide-react';
 
 const ResumeModal = ({ isOpen, onClose, resumeUrl, userName }) => {
-    const [isMobile, setIsMobile] = useState(false);
-    useEffect(() => {
-        setIsMobile(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
-    }, []);
+    const [isMobile] = useState(() => typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
     // Prevent background scrolling when modal is open
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
+            if (window.__lenis) window.__lenis.stop();
         } else {
             document.body.style.overflow = 'unset';
+            if (window.__lenis) window.__lenis.start();
         }
         return () => {
             document.body.style.overflow = 'unset';
+            if (window.__lenis) window.__lenis.start();
         };
     }, [isOpen]);
 
@@ -31,6 +31,10 @@ const ResumeModal = ({ isOpen, onClose, resumeUrl, userName }) => {
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 transition-opacity animate-in fade-in duration-200"
             onClick={handleBackdropClick}
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+            style={{ overscrollBehavior: 'contain' }}
+            data-lenis-prevent
         >
             <div className="bg-[#202124] w-full max-w-5xl h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 border border-[#3c4043]">
                 {/* Toolbar */}

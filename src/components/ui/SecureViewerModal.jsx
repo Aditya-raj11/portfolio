@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SecureViewerModal = ({ isOpen, onClose, fileUrl }) => {
+    useEffect(() => {
+        if (isOpen && fileUrl) {
+            document.body.style.overflow = 'hidden';
+            if (window.__lenis) window.__lenis.stop();
+        } else {
+            document.body.style.overflow = 'unset';
+            if (window.__lenis) window.__lenis.start();
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+            if (window.__lenis) window.__lenis.start();
+        };
+    }, [isOpen, fileUrl]);
+
     if (!isOpen || !fileUrl) return null;
 
     const isPdf = fileUrl.toLowerCase().includes('.pdf');
@@ -15,7 +29,13 @@ const SecureViewerModal = ({ isOpen, onClose, fileUrl }) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-md p-4">
+                <div 
+                    className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-md p-4"
+                    onWheel={(e) => e.stopPropagation()}
+                    onTouchMove={(e) => e.stopPropagation()}
+                    style={{ overscrollBehavior: 'contain' }}
+                    data-lenis-prevent
+                >
                     <button 
                         onClick={onClose}
                         className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-[210]"

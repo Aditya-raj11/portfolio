@@ -14,12 +14,15 @@ const ImageLightbox = ({ isOpen, onClose, images, initialIndex = 0 }) => {
                 setIsLoading(true);
             }, 0);
             document.body.style.overflow = 'hidden'; // Prevent scrolling
+            if (window.__lenis) window.__lenis.stop();
         } else {
             // document.body.style.overflow = 'unset'; // Handled by cleanup
+            if (window.__lenis) window.__lenis.start();
             setTimeout(() => setIsLoading(true), 0);
         }
         return () => {
             document.body.style.overflow = 'unset';
+            if (window.__lenis) window.__lenis.start();
         };
     }, [isOpen, initialIndex]);
 
@@ -59,6 +62,10 @@ const ImageLightbox = ({ isOpen, onClose, images, initialIndex = 0 }) => {
                     transition={{ duration: 0.2 }}
                     className="fixed inset-0 z-[100] bg-white/95 dark:bg-[#000000]/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
                     onClick={onClose}
+                    onWheel={(e) => e.stopPropagation()}
+                    onTouchMove={(e) => e.stopPropagation()}
+                    style={{ overscrollBehavior: 'contain' }}
+                    data-lenis-prevent
                 >
                     {/* Close Button */}
                     <motion.button

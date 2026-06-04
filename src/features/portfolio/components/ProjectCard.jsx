@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
 import { Download, ExternalLink, Globe, Smartphone, ChevronLeft, ChevronRight, Github, ImageOff } from 'lucide-react';
 import { motion } from 'framer-motion';
-import ImageLightbox from '../../../components/ui/ImageLightbox';
 import SpotlightCard from '../../../components/ui/SpotlightCard';
 import DetailModal from '../../../components/ui/DetailModal';
-import { useToast } from '../../../components/ui/Toast';
 import { db } from '../../../lib/firebase';
 import { doc, updateDoc, increment } from 'firebase/firestore';
 
 const ProjectCard = ({ project, large = false }) => {
     const { title, description, imageUrl, imageUrls, category, projectUrl, downloadUrl, githubUrl, techStack } = project;
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
-    const toast = useToast();
 
     // Combine single imageUrl and imageUrls array into one list for the carousel
     const images = [imageUrl, ...(imageUrls || [])].filter(Boolean);
@@ -31,17 +27,7 @@ const ProjectCard = ({ project, large = false }) => {
         setCurrentIndex((prev) => (prev === uniqueImages.length - 1 ? 0 : prev + 1));
     };
 
-    const toggleLightbox = (e) => {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        if (uniqueImages.length === 0) {
-            toast({ message: 'No image available to preview.', type: 'info' });
-            return;
-        }
-        setIsLightboxOpen(!isLightboxOpen);
-    };
+
 
     // Helper to convert Google Drive links
     const getDirectImageUrl = (url) => {
@@ -65,7 +51,7 @@ const ProjectCard = ({ project, large = false }) => {
         return url;
     };
 
-    const currentImage = getDirectImageUrl(uniqueImages[currentIndex]);
+
 
     // Parse tech stack – can be a comma-separated string or an array
     const stackTags = Array.isArray(techStack)
@@ -259,13 +245,7 @@ const ProjectCard = ({ project, large = false }) => {
                 </div>
             </SpotlightCard>
 
-            {/* Lightbox Modal */}
-            <ImageLightbox
-                isOpen={isLightboxOpen}
-                onClose={() => setIsLightboxOpen(false)}
-                images={uniqueImages}
-                initialIndex={currentIndex}
-            />
+
 
             {/* Detail Modal */}
             <DetailModal

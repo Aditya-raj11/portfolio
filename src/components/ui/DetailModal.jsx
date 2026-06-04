@@ -16,11 +16,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 const DetailModal = ({ isOpen, onClose, item, type = 'project', onSecureView }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [loadedImages, setLoadedImages] = useState({});
-    const [isMobile, setIsMobile] = useState(false);
+    const [isMobile] = useState(() => typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
 
-    useEffect(() => {
-        setIsMobile(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
-    }, []);
+    const [prevItem, setPrevItem] = useState(null);
+    if (item !== prevItem) {
+        setPrevItem(item);
+        setCurrentImageIndex(0);
+        setLoadedImages({});
+    }
 
     // Gather all images for gallery
     const getImages = () => {
@@ -40,8 +43,6 @@ const DetailModal = ({ isOpen, onClose, item, type = 'project', onSecureView }) 
             document.body.style.overflow = 'hidden';
             // Stop Lenis smooth scroll so background doesn't scroll
             if (window.__lenis) window.__lenis.stop();
-            setCurrentImageIndex(0);
-            setLoadedImages({});
         } else {
             // Restart Lenis when modal closes
             if (window.__lenis) window.__lenis.start();

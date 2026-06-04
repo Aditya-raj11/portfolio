@@ -44,13 +44,15 @@ const MonthYearPicker = ({ value = '', onChange, label, required = false, placeh
 
     const selected = parseValue();
 
-    // Initialize viewYear from value
-    useEffect(() => {
+    // Initialize viewYear from value when it changes
+    const [prevValue, setPrevValue] = useState(value);
+    if (value !== prevValue) {
+        setPrevValue(value);
         const parsed = parseValue();
         if (parsed.year > 0) {
             setViewYear(parsed.year);
         }
-    }, [value]);
+    }
 
     // Close on outside click
     useEffect(() => {
