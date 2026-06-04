@@ -15,7 +15,7 @@ import { motion, AnimatePresence } from 'framer-motion';
  */
 const DetailModal = ({ isOpen, onClose, item, type = 'project', onSecureView }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [imageLoading, setImageLoading] = useState(true);
+    const [loadedImages, setLoadedImages] = useState({});
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
@@ -41,7 +41,7 @@ const DetailModal = ({ isOpen, onClose, item, type = 'project', onSecureView }) 
             // Stop Lenis smooth scroll so background doesn't scroll
             if (window.__lenis) window.__lenis.stop();
             setCurrentImageIndex(0);
-            setImageLoading(true);
+            setLoadedImages({});
         } else {
             // Restart Lenis when modal closes
             if (window.__lenis) window.__lenis.start();
@@ -141,7 +141,7 @@ const DetailModal = ({ isOpen, onClose, item, type = 'project', onSecureView }) 
                         {images.length > 0 && !isPdf && (
                             <div className="relative w-full h-56 sm:h-72 md:h-80 bg-gray-100 dark:bg-black/60 overflow-hidden shrink-0">
                                 {/* Loading spinner */}
-                                {imageLoading && (
+                                {!loadedImages[currentImageIndex] && (
                                     <div className="absolute inset-0 flex items-center justify-center z-10 bg-gray-100 dark:bg-black/60">
                                         <Loader2 className="animate-spin text-gray-400 dark:text-gray-500" size={36} />
                                     </div>
@@ -160,12 +160,12 @@ const DetailModal = ({ isOpen, onClose, item, type = 'project', onSecureView }) 
                                                 className="w-full h-full object-cover"
                                                 loading="eager"
                                                 onLoad={() => {
-                                                    if (idx === 0) setImageLoading(false);
+                                                    setLoadedImages(prev => ({ ...prev, [idx]: true }));
                                                 }}
                                                 onError={(e) => {
                                                     e.target.onerror = null;
                                                     e.target.src = 'https://placehold.co/800x400?text=No+Image';
-                                                    if (idx === 0) setImageLoading(false);
+                                                    setLoadedImages(prev => ({ ...prev, [idx]: true }));
                                                 }}
                                             />
                                         </div>
@@ -348,9 +348,7 @@ const DetailModal = ({ isOpen, onClose, item, type = 'project', onSecureView }) 
                                             <button
                                                 key={i}
                                                 onClick={() => {
-                                                    setImageLoading(true);
                                                     setCurrentImageIndex(i);
-                                                    // Scroll to top of modal
                                                 }}
                                                 className={`shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-all ${i === currentImageIndex
                                                     ? 'border-black dark:border-white shadow-md scale-105'
