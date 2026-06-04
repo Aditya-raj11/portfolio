@@ -229,7 +229,13 @@ html.lenis body {
 
 /* ─── Custom Cursor ─── */
 @media (pointer: fine) {
-  body, a, button, [role="button"], input, textarea, select {
+  body:not(.use-normal-cursor),
+  body:not(.use-normal-cursor) a,
+  body:not(.use-normal-cursor) button,
+  body:not(.use-normal-cursor) [role="button"],
+  body:not(.use-normal-cursor) input,
+  body:not(.use-normal-cursor) textarea,
+  body:not(.use-normal-cursor) select {
     cursor: none !important;
   }
 }

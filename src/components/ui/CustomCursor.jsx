@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 const CustomCursor = () => {
+    const location = useLocation();
+    const isAdminRoute = location.pathname.startsWith('/admin');
+
     const [isHovering, setIsHovering] = useState(false);
     const [isClicked, setIsClicked] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
@@ -20,7 +24,21 @@ const CustomCursor = () => {
     const dotX = useSpring(mouseX, dotSpringConfig);
     const dotY = useSpring(mouseY, dotSpringConfig);
 
+    // Handle normal cursor class toggle for Admin dashboard
     useEffect(() => {
+        if (isAdminRoute) {
+            document.body.classList.add('use-normal-cursor');
+        } else {
+            document.body.classList.remove('use-normal-cursor');
+        }
+        return () => {
+            document.body.classList.remove('use-normal-cursor');
+        };
+    }, [isAdminRoute]);
+
+    useEffect(() => {
+        if (isAdminRoute) return;
+
         const updateMousePosition = (e) => {
             mouseX.set(e.clientX);
             mouseY.set(e.clientY);
@@ -64,7 +82,11 @@ const CustomCursor = () => {
             window.removeEventListener('mousedown', handleMouseDown);
             window.removeEventListener('mouseup', handleMouseUp);
         };
-    }, [isVisible, mouseX, mouseY]);
+    }, [isVisible, mouseX, mouseY, isAdminRoute]);
+
+    if (isAdminRoute) {
+        return null;
+    }
 
     if (typeof window !== 'undefined' && window.matchMedia("(any-hover: none)").matches) {
         return null;
