@@ -53,25 +53,26 @@ const Navbar = ({ profileName, showExperience = true, showCertifications = true,
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: -80, opacity: 0 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    className="fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full px-6 py-3 flex items-center gap-8
+                    className="fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full px-4 py-2.5 md:px-6 md:py-3 flex items-center gap-4 md:gap-8
                         bg-white/60 dark:bg-black/40
                         backdrop-blur-2xl backdrop-saturate-150
                         border border-white/50 dark:border-white/10
                         shadow-[0_8px_32px_rgba(0,0,0,0.08),_0_0_0_1px_rgba(0,0,0,0.04)]
-                        dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),_0_0_0_1px_rgba(255,255,255,0.05)]"
+                        dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),_0_0_0_1px_rgba(255,255,255,0.05)]
+                        max-w-[92vw] md:max-w-none"
                 >
                     {/* Name/Logo */}
-                    <button onClick={() => scrollTo('#hero')} className="font-heading font-bold text-sm text-glossy whitespace-nowrap mr-2">
+                    <button onClick={() => scrollTo('#hero')} className="hidden sm:block font-heading font-bold text-sm text-glossy whitespace-nowrap mr-2">
                         {profileName || 'Portfolio'}
                     </button>
 
                     {/* Nav Links */}
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5 flex-1 min-w-0">
                         {navLinks.map(link => (
                             <button
                                 key={link.href}
                                 onClick={() => scrollTo(link.href)}
-                                className={`relative px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${activeSection === link.href.replace('#', '')
+                                className={`relative px-3 py-1.5 text-sm font-medium rounded-full transition-colors whitespace-nowrap ${activeSection === link.href.replace('#', '')
                                         ? 'text-black dark:text-white'
                                         : 'text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white'
                                     }`}
